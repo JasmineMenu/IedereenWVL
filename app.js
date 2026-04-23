@@ -20,11 +20,14 @@ function vibrate() {
   if (navigator.vibrate) navigator.vibrate(20);
 }
 
-function fixSpacing(text) {
-  return text
-    .split(" ")
-    .map(word => `<span>${word}</span>`)
-    .join(" ");
+// SVG hartje — rood gevuld (aan) of transparant (uit)
+function heartSVG(filled) {
+  const color = filled ? "#e8192c" : "none";
+  const stroke = filled ? "#e8192c" : "#aaa";
+  return `<svg class="heart-icon" viewBox="0 0 32 30" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 27 C16 27 2 18 2 9.5 C2 5.36 5.36 2 9.5 2 C12.1 2 14.4 3.3 16 5.3 C17.6 3.3 19.9 2 22.5 2 C26.64 2 30 5.36 30 9.5 C30 18 16 27 16 27Z"
+      fill="${color}" stroke="${stroke}" stroke-width="2"/>
+  </svg>`;
 }
 
 // =======================
@@ -50,9 +53,7 @@ function play(file) {
     currentAudio.currentTime = 0;
   }
   currentAudio = new Audio(url);
-  currentAudio.play().catch(err => {
-    console.log("Audio error:", url, err);
-  });
+  currentAudio.play().catch(err => console.log("Audio error:", url, err));
 }
 
 // =======================
@@ -77,19 +78,23 @@ function renderBottombar(showDeleteFav = false) {
 
   if (showDeleteFav) {
     bar.innerHTML = `
-      <button class="delete-fav-btn" onclick="confirmDeleteFavs()">🗑 Verwijder alle favorieten</button>
+      <button class="delete-fav-btn" onclick="confirmDeleteFavs()">🗑 Verwijder alle<br>favorieten</button>
+      <div class="bottombar-divider"></div>
       <button class="bottombar-btn" onclick="renderInfo()">
         <img src="img/logo_wvl@2x.png" class="btn-icon" alt="Info">
+        <span>Info</span>
       </button>
     `;
   } else {
     bar.innerHTML = `
       <button class="bottombar-btn" onclick="renderFavorieten()">
-        <span class="btn-icon">❤️</span>
+        ${heartSVG(true)}
         <span>Favorieten</span>
       </button>
+      <div class="bottombar-divider"></div>
       <button class="bottombar-btn" onclick="renderInfo()">
         <img src="img/logo_wvl@2x.png" class="btn-icon" alt="Info">
+        <span>Info</span>
       </button>
     `;
   }
@@ -181,7 +186,7 @@ function renderThemes() {
   Object.keys(data).forEach(theme => {
     const div = document.createElement("div");
     div.className = "item";
-    div.innerHTML = `<span class="label">${fixSpacing(theme)}</span><span class="arrow">➜</span>`;
+    div.innerHTML = `<span class="label">${theme}</span><span class="arrow">➜</span>`;
     div.onclick = () => renderTheme(theme);
     inner.appendChild(div);
   });
@@ -211,13 +216,11 @@ function renderTheme(theme) {
     const div = document.createElement("div");
     div.className = "item";
     div.innerHTML = `
-      <span class="label">${fixSpacing(item.title)}</span>
-      <span class="fav">${favorites.includes(item.file) ? "❤️" : "🤍"}</span>
+      <span class="label">${item.title}</span>
+      <span class="fav">${heartSVG(favorites.includes(item.file))}</span>
     `;
-
     div.querySelector(".label").onclick = () => { vibrate(); play(item.file); };
     div.querySelector(".fav").onclick = (e) => { e.stopPropagation(); toggleFav(item.file); };
-
     inner.appendChild(div);
   });
 
@@ -241,9 +244,11 @@ function renderFavorieten() {
   inner.id = "content-inner";
   content.appendChild(inner);
 
+  const seen = new Set();
   const favItems = [];
   Object.values(data).flat().forEach(item => {
-    if (favorites.includes(item.file) && !favItems.find(i => i.file === item.file)) {
+    if (favorites.includes(item.file) && !seen.has(item.file)) {
+      seen.add(item.file);
       favItems.push(item);
     }
   });
@@ -259,8 +264,8 @@ function renderFavorieten() {
       const div = document.createElement("div");
       div.className = "item";
       div.innerHTML = `
-        <span class="label">${fixSpacing(item.title)}</span>
-        <span class="fav">${favorites.includes(item.file) ? "❤️" : "🤍"}</span>
+        <span class="label">${item.title}</span>
+        <span class="fav">${heartSVG(true)}</span>
       `;
       div.querySelector(".label").onclick = () => { vibrate(); play(item.file); };
       div.querySelector(".fav").onclick = (e) => {
