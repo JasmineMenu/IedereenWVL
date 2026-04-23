@@ -26,7 +26,7 @@ html, body {
   top: 0;
   left: 0;
   right: 0;
-  height: 55px;
+  height: 65px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -34,29 +34,49 @@ html, body {
   color: white;
   z-index: 1000;
   padding: 0 15px;
-  font-size: 20px;
   font-weight: bold;
 }
 
 .back {
   position: absolute;
   left: 15px;
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 15px;
+  font-weight: normal;
   cursor: pointer;
-  text-transform: capitalize;
+  text-transform: none;
 }
 
 .title-text {
   font-weight: bold;
   text-align: center;
-  font-size: 20px;
+  font-size: 32px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Rij met titel + delete knop op favorieten pagina */
+.topbar-with-action {
+  position: absolute;
+  right: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.delete-fav-topbtn {
+  background: none;
+  border: none;
+  font-size: 26px;
+  cursor: pointer;
+  color: #ff4444;
+  padding: 4px;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ===== SUB BAR ===== */
 .subbar {
   position: fixed;
-  top: 55px;        /* sluit aan op nieuwe topbar hoogte */
+  top: 65px;
   left: 0;
   right: 0;
   background: black;
@@ -67,25 +87,83 @@ html, body {
   border-bottom: 1px solid #333;
 }
 
+/* ===== BOTTOM BAR ===== */
+.bottombar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #2e2e2e;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 80px;
+  border-top: 1px solid #444;
+}
+
+.bottombar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: #888;
+  font-family: WVL, sans-serif;
+  font-size: 13px;
+  padding: 5px 0;
+  width: 33.33%;
+  height: 100%;
+  transition: color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottombar-btn:active {
+  opacity: 0.7;
+}
+
+.bottombar-btn.active {
+  color: white;
+}
+
+.bottombar-btn svg {
+  width: 32px;
+  height: 32px;
+}
+
+.bottombar-btn .tab-logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.5;
+  transition: opacity 0.15s ease;
+}
+
+.bottombar-btn.active .tab-logo {
+  opacity: 1;
+}
+
 /* ===== CONTENT AREA ===== */
 #content {
   position: fixed;
-  top: 100px;       /* topbar (55) + subbar (~45) */
-  bottom: 60px;
+  top: 110px;
+  bottom: 80px;
   left: 0;
   right: 0;
   overflow-y: auto;
   background: black;
 }
 
-/* Eerste item wat ruimte geven zodat het niet tegen de balk plakt */
-#content-inner .item:first-child {
-  margin-top: 6px;
-}
-/* Desktop: centreer en begrens breedte */
 #content-inner {
   max-width: 700px;
   margin: 0 auto;
+}
+
+#content-inner .item:first-child {
+  margin-top: 6px;
 }
 
 /* ===== ITEMS ===== */
@@ -104,8 +182,7 @@ html, body {
   min-width: 0;
   text-align: left;
   padding-right: 10px;
-  word-spacing: -0.5em;   /* verwijdert bijna de volledige font-spatie */
-  letter-spacing: 0.05em; /* kleine compensatie voor leesbaarheid */
+  word-spacing: normal;
   overflow-wrap: break-word;
 }
 
@@ -123,6 +200,135 @@ html, body {
   min-width: 30px;
   text-align: right;
   margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.heart-icon {
+  width: 22px;
+  height: 22px;
+  display: inline-block;
+}
+
+.delete-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+/* ===== POPUP ===== */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-box {
+  background: #333;
+  border-radius: 12px;
+  padding: 30px 25px;
+  max-width: 320px;
+  width: 90%;
+  text-align: center;
+}
+
+.popup-box p {
+  font-size: 18px;
+  margin: 0 0 24px 0;
+  font-weight: bold;
+}
+
+.popup-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.popup-actions button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-family: WVL, sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.popup-actions .btn-cancel {
+  background: #555;
+  color: white;
+}
+
+.popup-actions .btn-confirm {
+  background: #ff6b6b;
+  color: white;
+}
+
+/* ===== INFO PAGINA ===== */
+.info-content {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 25px 20px 40px;
+}
+
+.info-logo-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.info-logo-row img {
+  max-width: 90%;
+  height: auto;
+}
+
+.info-section-title {
+  color: #cc2200;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  margin: 0 0 14px;
+  word-spacing: -0.4em;
+}
+
+.info-intro {
+  font-size: 17px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.6;
+  margin: 0 0 18px;
+  word-spacing: -0.4em;
+}
+
+.info-body {
+  font-size: 15px;
+  text-align: center;
+  line-height: 1.7;
+  color: #ccc;
+  margin: 0 0 30px;
+  word-spacing: -0.4em;
+}
+
+.info-wvl-logo {
+  display: flex;
+  justify-content: flex-end;
+  margin: -10px 0 30px;
+}
+
+.info-wvl-logo img {
+  height: 80px;
+  width: auto;
+}
+
+.info-divider {
+  border: none;
+  border-top: 1px solid #333;
+  margin: 10px 0 28px;
 }
 
 /* ===== LOGO ===== */
@@ -154,6 +360,10 @@ html, body {
 @media (max-width: 600px) {
   #content-inner {
     max-width: 100%;
+  }
+
+  .title-text {
+    font-size: 26px;
   }
 
   .item {
