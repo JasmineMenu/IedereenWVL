@@ -82,17 +82,19 @@ body {
 /* ===== ITEMS ===== */
 .item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 18px 16px;
+
+  padding: 15px;
   border-bottom: 1px solid #666;
+
   cursor: pointer;
 }
 
 /* linker zone = geluid */
 .item .label {
   flex: 1;
-  padding-right: 10px; /* ruimte vóór hartje */
+  text-align: left;
+  padding-right: 10px;
 }
 
 .item:active {
@@ -104,9 +106,8 @@ body {
 
 /* rechter zone = hartje */
 .item .fav {
-  width: 40px;
+  width: 30px;
   text-align: right;
-  flex-shrink: 0;
 }
 
 /* ===== MOBILE FIX ===== */
