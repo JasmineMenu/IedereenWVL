@@ -215,11 +215,22 @@ window.addEventListener("load", () => {
 
   if (!splash) return;
 
-  // 🖥 desktop → direct weg
+  // 🖥 desktop → direct verwijderen (BELANGRIJK: WACHT NIET)
   if (window.innerWidth > 768) {
     splash.remove();
     return;
   }
+
+  // 📱 mobile → tonen + fade
+  setTimeout(() => {
+    splash.style.opacity = "0";
+    splash.style.transition = "opacity 0.6s ease";
+
+    setTimeout(() => {
+      splash.remove();
+    }, 600);
+  }, 1500);
+});
 
   //  mobile → audio unlock (iOS fix)
   document.body.addEventListener("touchstart", () => {
