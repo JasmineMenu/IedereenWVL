@@ -104,7 +104,8 @@ html, body {
   min-width: 0;
   text-align: left;
   padding-right: 10px;
-  word-spacing: -0.3em;  /* compenseert de brede spatie in WVL font */
+  word-spacing: -0.5em;   /* verwijdert bijna de volledige font-spatie */
+  letter-spacing: 0.05em; /* kleine compensatie voor leesbaarheid */
   overflow-wrap: break-word;
 }
 
