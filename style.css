@@ -9,6 +9,8 @@ body {
   background: black;
   color: white;
   overflow: hidden;
+  /* Zorg dat tekst nooit justified wordt */
+  text-align: left;
 }
 
 /* ===== TOP BAR ===== */
@@ -18,15 +20,12 @@ body {
   left: 0;
   right: 0;
   height: 50px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   background: #444;
   color: white;
   z-index: 1000;
-
   padding: 0 15px;
   box-sizing: border-box;
 }
@@ -83,18 +82,24 @@ body {
 .item {
   display: flex;
   align-items: center;
-
   padding: 15px;
   border-bottom: 1px solid #666;
-
   cursor: pointer;
+  /* Voorkomt dat flex de tekst uitspreidt */
+  justify-content: flex-start;
 }
 
-/* linker zone = geluid */
+/* Linker zone = geluid/label */
 .item .label {
   flex: 1;
   text-align: left;
   padding-right: 10px;
+  /* Forceer normale letterspacing en word-spacing */
+  word-spacing: normal;
+  letter-spacing: normal;
+  /* Voorkomt tekstafbreking of justification */
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .item:active {
@@ -103,11 +108,16 @@ body {
   transition: background 0.1s ease, transform 0.1s ease;
 }
 
-
-/* rechter zone = hartje */
+/* Rechter zone = hartje/pijl */
 .item .fav {
+  /* Vaste breedte én flex-shrink: 0 zodat het nooit inkrimpt */
   width: 30px;
+  min-width: 30px;
+  flex-shrink: 0;
   text-align: right;
+  /* Geen extra ruimte tussen icoon en rand */
+  margin-left: auto;
+  padding-left: 8px;
 }
 
 /* ===== MOBILE FIX ===== */
@@ -119,10 +129,17 @@ html, body {
 
 @media (max-width: 600px) {
   .item {
-    padding: 18px;
+    padding: 12px 15px;
   }
 
-  .item span {
+  .item .label {
+    font-size: 18px;
+  }
+
+  /* Pijltje op mobile: gegarandeerde ruimte */
+  .item .fav {
+    width: 36px;
+    min-width: 36px;
     font-size: 18px;
   }
 
@@ -131,11 +148,13 @@ html, body {
   }
 }
 
+/* ===== LOGO & STARTSCREEN ===== */
 .logo {
   height: 30px;
   max-height: 100%;
   object-fit: contain;
 }
+
 #startscreen {
   position: fixed;
   inset: 0;
