@@ -210,55 +210,26 @@ if ("serviceWorker" in navigator) {
 // =======================
 // iOS AUDIO UNLOCK
 // =======================
-window.addEventListener("load", () => {
-  const splash = document.getElementById("splash");
 
-  if (!splash) return;
-
-  // 🖥 desktop → direct verwijderen (BELANGRIJK: WACHT NIET)
-  if (window.innerWidth > 768) {
-    splash.remove();
-    return;
-  }
-
-  // 📱 mobile → tonen + fade
-  setTimeout(() => {
-    splash.style.opacity = "0";
-    splash.style.transition = "opacity 0.6s ease";
-
-    setTimeout(() => {
-      splash.remove();
-    }, 600);
-  }, 1500);
-});
-
-  //  mobile → audio unlock (iOS fix)
   document.body.addEventListener("touchstart", () => {
     const unlock = new Audio();
     unlock.play().catch(() => {});
   }, { once: true });
 
-  //  fade out splash
-  setTimeout(() => {
-    splash.style.opacity = "0";
-    splash.style.transition = "opacity 0.6s ease";
+
+// =======================
+// Startscreen
+// =======================
+
+const startScreen = document.getElementById("startscreen");
+
+if (startScreen) {
+  startScreen.addEventListener("click", () => {
+    startScreen.style.opacity = "0";
+    startScreen.style.transition = "opacity 0.4s ease";
 
     setTimeout(() => {
-      splash.remove();
-    }, 600);
-  }, 1800);
-});
-
-  // unlock audio (iOS fix)
-  document.body.addEventListener("touchstart", () => {
-    const unlock = new Audio();
-    unlock.play().catch(() => {});
-  }, { once: true });
-
-  setTimeout(() => {
-    splash.style.opacity = "0";
-    splash.style.transition = "opacity 0.6s ease";
-
-    setTimeout(() => splash.remove(), 600);
-  }, 1800);
-});
+      startScreen.remove();
+    }, 400);
+  });
+}
