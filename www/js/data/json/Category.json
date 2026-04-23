@@ -1,0 +1,72 @@
+{ "results": [
+    {
+        "categoryTitle": "Feestdagen",
+        "categoryType": "word",
+        "createdAt": "2013-04-24T09:14:36.245Z",
+        "objectId": "Fe3stD1g3",
+        "updatedAt": "2013-04-24T09:14:36.245Z"
+    },
+	{
+        "categoryTitle": "Huis / Tuin / Keuken",
+        "categoryType": "word",
+        "createdAt": "2013-04-24T09:14:36.153Z",
+        "objectId": "21IJdLsfDg",
+        "updatedAt": "2013-04-24T09:14:36.153Z"
+    },
+	{
+        "categoryTitle": "Het weer",
+        "categoryType": "word",
+        "createdAt": "2013-04-24T09:14:36.182Z",
+        "objectId": "7c3h3Y7RO6",
+        "updatedAt": "2013-04-24T09:14:36.182Z"
+    },
+	{
+        "categoryTitle": "Op restaurant",
+        "categoryType": "word",
+        "createdAt": "2013-04-24T09:14:36.114Z",
+        "objectId": "CQYMjlS2HD",
+        "updatedAt": "2013-04-24T09:14:36.114Z"
+    },
+	{
+        "categoryTitle": "In de winkel",
+        "categoryType": "word",
+        "createdAt": "2013-04-24T09:14:36.127Z",
+        "objectId": "HVVeeNqasg",
+        "updatedAt": "2013-04-24T09:14:36.127Z"
+    },
+	{
+        "categoryTitle": "Dieren",
+        "categoryType": "word",
+        "createdAt": "2013-04-24T09:14:36.169Z",
+        "objectId": "IgtIuP4FCE",
+        "updatedAt": "2013-04-24T09:14:36.169Z"
+    },
+	{
+        "categoryTitle": "In het café",
+        "categoryType": "word",
+        "createdAt": "2013-04-24T09:14:36.075Z",
+        "objectId": "VEi48LenKZ",
+        "updatedAt": "2013-04-24T09:14:36.075Z"
+    },
+	{
+        "categoryTitle": "Op straat / Onderweg",
+        "categoryType": "word",
+        "createdAt": "2013-04-24T09:14:36.140Z",
+        "objectId": "m2go8co5ob",
+        "updatedAt": "2013-04-24T09:14:36.140Z"
+    },
+    {
+        "categoryTitle": "Uitdrukkingen",
+        "categoryType": "word",
+        "createdAt": "2013-04-24T09:14:36.245Z",
+        "objectId": "Bp2EQjwahz",
+        "updatedAt": "2013-04-24T09:14:36.245Z"
+    },
+    {
+        "categoryTitle": "Vervoegingen van ja",
+        "categoryType": "word",
+        "createdAt": "2013-04-24T09:14:36.245Z",
+        "objectId": "Bp3AQjbwap",
+        "updatedAt": "2013-04-24T09:14:36.245Z"
+    }
+] }

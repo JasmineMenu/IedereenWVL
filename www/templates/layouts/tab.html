@@ -1,0 +1,36 @@
+<ion-pane>
+  <ion-nav-bar class="bar-dark">
+      <ion-nav-back-button class="button-clear button-back">
+        <i class="icon-arrow-left"></i> Terug
+      </ion-nav-back-button>
+  </ion-nav-bar>
+
+  <ion-tabs class="tabs-icon-top tabs-background-dark tabs-color-light">
+
+    <!-- Theme's Tab -->
+    <ion-tab title="Thema's" icon-off="icon-thema" icon-on="icon-thema" ui-sref="app.tab.themes">
+      <ion-nav-view name="tab-themes"></ion-nav-view>
+    </ion-tab>
+
+    <!-- Best of Tab -->
+    <ion-tab title="'t Beste" icon-off="icon-beste" icon-on="icon-beste" ui-sref="app.tab.best-of">
+      <ion-nav-view name="tab-best-of"></ion-nav-view>
+    </ion-tab>
+
+    <!-- Quiz Tab -->
+    <ion-tab title="De Quiz" icon-off="icon-quiz" icon-on="icon-quiz" ui-sref="app.tab.quiz">
+      <ion-nav-view name="tab-quiz"></ion-nav-view>
+    </ion-tab>
+
+    <!-- Theme's Tab -->
+    <ion-tab title="Foto" icon-off="icon-foto" icon-on="icon-foto" ui-sref="app.tab.photo">
+      <ion-nav-view name="tab-photo"></ion-nav-view>
+    </ion-tab>
+
+     <!-- Info Tab -->
+    <ion-tab title="Info" icon-off="icon-info" icon-on="icon-info" ui-sref="app.tab.info">
+      <ion-nav-view name="tab-info"></ion-nav-view>
+    </ion-tab>
+
+  </ion-tabs>
+</ion-pane>

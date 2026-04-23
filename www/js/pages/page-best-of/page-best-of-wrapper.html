@@ -1,0 +1,11 @@
+<ion-view title="'t Beste">	
+	<ion-nav-buttons side="right">
+      <button class="button button-clear" ng-click="toggleEditMode('edit')" ng-if="showEdit">
+        Wijzig
+      </button>
+      <button class="button button-clear" ng-click="toggleEditMode('ready')" ng-if="showReady">
+        Klaar
+      </button>
+    </ion-nav-buttons>
+	<page-best-of favorites="favorites" ng-class="!showEdit ? 'edit-mode' : ''"></page-best-of>
+</ion-view>

@@ -1,0 +1,9 @@
+<ion-content>
+  <ion-list>
+    <ion-item ng-repeat="sticker in stickers">
+      <a href="#" ng-click="onClicked($event, sticker);">
+        <img ng-src="{{sticker.versions[sticker.currentVersion]}}" class="sticker">
+      </a>
+    </ion-item>
+  </ion-list>
+</ion-content>

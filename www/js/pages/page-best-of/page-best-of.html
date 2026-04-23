@@ -1,0 +1,19 @@
+<ion-view title="'t Beste">
+    <div class="advert">
+        <img src="img/logo.svg" alt="Iedereen West-Vlaams" />
+    </div>
+
+    <ion-content class="has-header has-footer has-advert content content-best">
+        <div class="info">
+            <p>Voeg een geluid toe door op het <i class="icon icon-beste"></i> hartje te drukken in de woordenlijst onder 'Thema's'.</p>
+        </div>
+        <div class="tiles-listing">
+            <div ng-repeat="favorite in favorites track by favorite.favoriteIndex" class="tile-item tile-color-{{favorite.color}}" ng-click="playSound(favorite)" ng-style="{animationDelay: favorite.animationDelay, animationDuration: favorite.animationDuration}">
+                <div class="tile-item-content">
+                    {{favorite.dialectTitle}}
+                </div>
+                <a href="#" ng-click="removeFavorite($event, favorite);" class="cta-delete"><i class="icon icon-cross"></i></a>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>
