@@ -148,23 +148,17 @@ function renderThemes() {
 function renderTheme(theme) {
   currentTheme = theme;
 
-  // topbar
-  const title = document.getElementById("title");
-  title.innerHTML = "";
-
-  const back = document.createElement("span");
-  back.innerText = "←";
-  back.style.position = "absolute";
-  back.style.left = "10px";
-  back.style.cursor = "pointer";
-  back.onclick = renderThemes;
-
-  title.appendChild(back);
-  title.appendChild(document.createTextNode(theme.toUpperCase()));
+  document.getElementById("title").innerText = theme.toUpperCase();
 
   const content = document.getElementById("content");
   content.innerHTML = "";
 
+  // 🔥 PRELOAD HELE THEMA (hier moet het staan)
+  data[theme].forEach(item => {
+    getAudio(item.file);
+  });
+
+  // daarna pas renderen
   data[theme].forEach(item => {
     const div = document.createElement("div");
     div.className = "item";
@@ -179,13 +173,11 @@ function renderTheme(theme) {
     const label = div.querySelector(".label");
     const fav = div.querySelector(".fav");
 
-    // 🎵 play
     label.onclick = () => {
       vibrate();
       play(item.file);
     };
 
-    // ❤️ fav
     fav.onclick = (e) => {
       e.stopPropagation();
       toggleFav(item.file);
