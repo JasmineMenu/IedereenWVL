@@ -141,15 +141,18 @@ if ("serviceWorker" in navigator) {
 }
 
 window.addEventListener("load", () => {
-  setTimeout(() => {
-    const splash = document.getElementById("splash");
-    if (splash) {
-      splash.style.opacity = "0";
-      splash.style.transition = "opacity 0.4s ease";
+  const splash = document.getElementById("splash");
 
-      setTimeout(() => {
-        splash.remove();
-      }, 400);
-    }
-  }, 800);
+  if (!splash) return;
+
+  // iets langer en stabieler gevoel
+  setTimeout(() => {
+    splash.style.opacity = "0";
+    splash.style.transition = "opacity 0.6s ease";
+
+    setTimeout(() => {
+      splash.remove();
+    }, 600);
+
+  }, 1800); // ⬅️ langer zichtbaar (1.8s)
 });
