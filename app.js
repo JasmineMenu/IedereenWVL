@@ -1,92 +1,106 @@
-const content = document.getElementById("content");
-
-let state = "themes";
-let currentTheme = null;
-
+let sounds = [];
+let data = {};
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 
-// 👉 jouw mp3 lijst (later automatisch uit map te laden kan ook)
-const files = [
-  "mp3/WVL_APP_9_UitdrukkingenRoeselare_TswienDeBietnInjaeghen.mp3",
-  "mp3/WVL_APP_7_Weer_Smuk'n.mp3",
-  "mp3/WVL_APP_5_HuisTuinKeuken_Buzzestove.mp3",
-  "mp3/WVL_APP_2_Resto_Gernoars.mp3",
-  "mp3/WVL_APP_1_Cafe_Kaffie.mp3",
-  "mp3/ja_jijvorm.mp3",
-  "mp3/mijnschatje.mp3",
-  "mp3/_t_Zwien_deur_de_beat_n_joagen.mp3",
-  "mp3/WVL_APP_11_DaBesanNie.mp3"
-];
+let currentTheme = null;
 
-// 🎯 thema detectie
+// =======================
+// LOAD JSON
+// =======================
+async function loadSounds() {
+  const res = await fetch("mp3/Sound.json");
+  const json = await res.json();
+
+  // soms zit data in results
+  sounds = json.results || json;
+
+  buildData();
+  renderThemes();
+}
+
+// =======================
+// GROEPEREN OP THEMA
+// =======================
+function buildData() {
+  data = { "Alles": [] };
+
+  sounds.forEach(s => {
+    const file = "mp3/" + s.fileName;
+
+    const item = {
+      file,
+      title: s.soundTitle || s.dialectTitle || file
+    };
+
+    const theme = getTheme(file);
+
+    if (!data[theme]) data[theme] = [];
+
+    data[theme].push(item);
+    data["Alles"].push(item);
+  });
+}
+
+// =======================
+// THEMA DETECTIE
+// =======================
 function getTheme(file) {
   const f = file.toLowerCase();
 
-  if (f.includes("uitdrukk")) return "Uitdrukkingen";
+  if (f.includes("uitdruk")) return "Uitdrukkingen";
   if (f.includes("weer")) return "Het weer";
   if (f.includes("huis") || f.includes("tuin") || f.includes("keuken")) return "Huis/tuin/keuken";
   if (f.includes("resto")) return "Op restaurant";
   if (f.includes("cafe")) return "In het café";
-  if (f.includes("ja_jijvorm")) return "Vervoegingen van ja";
+  if (f.includes("ja_jijvorm") || f.includes("ja")) return "Vervoegingen van ja";
 
   return "Rest";
 }
 
-// 🎯 alles groeperen
-function group() {
-  const map = { "Alles": [] };
-
-  files.forEach(f => {
-    const t = getTheme(f);
-    if (!map[t]) map[t] = [];
-    map[t].push(f);
-    map["Alles"].push(f);
-  });
-
-  return map;
-}
-
-const data = group();
-
-// 🟢 START VIEW
+// =======================
+// THEMA OVERZICHT
+// =======================
 function renderThemes() {
-  state = "themes";
+  currentTheme = null;
+
+  document.getElementById("title").innerText = "THEMA'S";
+
+  const content = document.getElementById("content");
   content.innerHTML = "";
 
   Object.keys(data).forEach(theme => {
     const div = document.createElement("div");
     div.className = "item";
-    div.innerHTML = `<span>${theme}</span><span class="arrow">➜</span>`;
+
+    div.innerHTML = `<span>${theme}</span><span>➜</span>`;
     div.onclick = () => renderTheme(theme);
+
     content.appendChild(div);
   });
 }
 
-// 🟡 SUBMENU
+// =======================
+// SUBTHEMA VIEW
+// =======================
 function renderTheme(theme) {
-  state = "theme";
   currentTheme = theme;
 
+  // topbar = titel + back
+  document.getElementById("title").innerHTML =
+    `<span onclick="renderThemes()" style="position:absolute; left:10px;">←</span>
+     ${theme.toUpperCase()}`;
+
+  const content = document.getElementById("content");
   content.innerHTML = "";
 
-  const header = document.createElement("div");
-  header.className = "header";
-  header.innerHTML = `
-    <div class="back" onclick="renderThemes()">← terug</div>
-    ${theme}
-  `;
-  content.appendChild(header);
-
-  data[theme].forEach(file => {
+  data[theme].forEach(item => {
     const div = document.createElement("div");
     div.className = "item";
 
-    const name = file.split("/").pop().replace(".mp3", "");
-
     div.innerHTML = `
-      <span onclick="play('${file}')">${name}</span>
-      <span class="fav" onclick="toggleFav('${file}')">
-        ${favorites.includes(file) ? "❤️" : "🤍"}
+      <span onclick="play('${item.file}')">${item.title}</span>
+      <span class="fav" onclick="toggleFav('${item.file}')">
+        ${favorites.includes(item.file) ? "❤️" : "🤍"}
       </span>
     `;
 
@@ -94,22 +108,35 @@ function renderTheme(theme) {
   });
 }
 
-// 🎵 audio
+// =======================
+// AUDIO
+// =======================
 function play(file) {
-  const a = new Audio(file);
-  a.play();
+  const audio = new Audio(file);
+  audio.play();
 }
 
-// ❤️ favorites
+// =======================
+// FAVORIETEN
+// =======================
 function toggleFav(file) {
   if (favorites.includes(file)) {
     favorites = favorites.filter(f => f !== file);
   } else {
     favorites.push(file);
   }
+
   localStorage.setItem("fav", JSON.stringify(favorites));
-  renderTheme(currentTheme);
+
+  if (currentTheme) renderTheme(currentTheme);
 }
 
-// init
-renderThemes();
+// =======================
+// START
+// =======================
+loadSounds();
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
+
