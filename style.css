@@ -149,8 +149,8 @@ html, body {
   min-width: 0;
   text-align: left;
   padding-right: 10px;
-  word-spacing: -0.5em;   /* verwijdert bijna de volledige font-spatie */
-  letter-spacing: 0.1em; /* kleine compensatie voor leesbaarheid */
+  word-spacing: -0.4em;   /* verwijdert bijna de volledige font-spatie */
+
   overflow-wrap: break-word;
 }
 
