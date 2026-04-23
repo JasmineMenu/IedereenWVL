@@ -26,7 +26,7 @@ html, body {
   top: 0;
   left: 0;
   right: 0;
-  height: 50px;
+  height: 55px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -34,50 +34,43 @@ html, body {
   color: white;
   z-index: 1000;
   padding: 0 15px;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .back {
   position: absolute;
   left: 15px;
-  font-size: 16px;
+  font-size: 20px;
+  font-weight: bold;
   cursor: pointer;
+  text-transform: capitalize;
 }
 
 .title-text {
   font-weight: bold;
   text-align: center;
+  font-size: 20px;
 }
 
 /* ===== SUB BAR ===== */
 .subbar {
   position: fixed;
-  top: 50px;
+  top: 55px;        /* sluit aan op nieuwe topbar hoogte */
   left: 0;
   right: 0;
   background: black;
   text-align: center;
-  padding: 10px;
+  padding: 12px 10px;
   font-weight: bold;
   z-index: 19;
   border-bottom: 1px solid #333;
 }
 
-/* ===== BOTTOM BAR ===== */
-.bottombar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #444;
-  text-align: center;
-  padding: 15px;
-  z-index: 10;
-}
-
 /* ===== CONTENT AREA ===== */
 #content {
   position: fixed;
-  top: 90px;
+  top: 100px;       /* topbar (55) + subbar (~45) */
   bottom: 60px;
   left: 0;
   right: 0;
@@ -85,6 +78,10 @@ html, body {
   background: black;
 }
 
+/* Eerste item wat ruimte geven zodat het niet tegen de balk plakt */
+#content-inner .item:first-child {
+  margin-top: 6px;
+}
 /* Desktop: centreer en begrens breedte */
 #content-inner {
   max-width: 700px;
