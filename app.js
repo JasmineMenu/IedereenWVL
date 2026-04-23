@@ -8,7 +8,7 @@ let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 let currentTheme = null;
 let currentAudio = null;
 let audioCache = new Map();
-let currentAudio = null;
+
 // =======================
 // HELPERS
 // =======================
