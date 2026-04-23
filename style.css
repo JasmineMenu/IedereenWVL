@@ -115,17 +115,18 @@ html, body {
   max-height: 100%;
   object-fit: contain;
 }
-#splash {
+#startscreen {
   position: fixed;
   inset: 0;
   background: black;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   z-index: 9999;
 }
 
-.splash-logo {
-  max-width: 70%;
+#start-logo {
+  max-width: 80%;
   height: auto;
+  cursor: pointer;
 }
