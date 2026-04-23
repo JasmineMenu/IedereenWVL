@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Soundboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    button {
+      display: block;
+      margin: 10px 0;
+      padding: 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Soundboard</h1>
+
+<div id="buttons"></div>
+
+<script>
+  // 🔥 JOUW DATA (hier komt die "rare JSON" binnen)
+  const data = {
+    results: [
+      {
+        soundTitle: "Schotelvod",
+        fileName: "WVL_APP_5_HuisTuinKeuken_Schutteldoek.mp3"
+      },
+      {
+        soundTitle: "Kwekhoane",
+        fileName: "WVL_APP_6_Dieren_Kwekhoane.mp3"
+      }
+    ]
+  };
+
+  const container = document.getElementById("buttons");
+
+  data.results.forEach(item => {
+    const btn = document.createElement("button");
+    btn.textContent = item.soundTitle;
+
+    btn.onclick = () => {
+      const audio = new Audio("mp3/" + item.fileName);
+      audio.play();
+    };
+
+    container.appendChild(btn);
+  });
+</script>
+
+</body>
+</html>
