@@ -7,7 +7,8 @@ let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 
 let currentTheme = null;
 let currentAudio = null;
-
+let audioCache = new Map();
+let currentAudio = null;
 // =======================
 // HELPERS
 // =======================
@@ -18,28 +19,37 @@ function cleanPath(fileName) {
 function vibrate() {
   if (navigator.vibrate) navigator.vibrate(20);
 }
+function getAudio(file) {
+  const url = encodeURI(file);
 
+  if (!audioCache.has(url)) {
+    const audio = new Audio(url);
+    audio.preload = "auto";
+    audioCache.set(url, audio);
+  }
+
+  return audioCache.get(url);
+}
 // =======================
 // AUDIO
 // =======================
 function play(file) {
-  console.log("TRY PLAY:", file);
+  if (!file) return;
 
-  const url = new URL(file, window.location.href).href;
-  console.log("FULL URL:", url);
+  const audio = getAudio(file);
 
-  if (currentAudio) {
+  if (currentAudio && currentAudio !== audio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
 
-  currentAudio = new Audio(url);
+  currentAudio = audio;
 
-  currentAudio.play().catch(err => {
-    console.log("AUDIO FAIL:", err, url);
+  audio.currentTime = 0;
+  audio.play().catch(err => {
+    console.log("Audio error:", file, err);
   });
 }
-
 // =======================
 // FAVORIETEN
 // =======================
