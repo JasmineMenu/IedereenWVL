@@ -17,16 +17,16 @@ body {
   top: 0;
   left: 0;
   right: 0;
-
   height: 50px;
 
   display: flex;
   align-items: center;
-  justify-content: center;
 
   background: #444;
   color: white;
   z-index: 1000;
+
+  padding: 0 15px;
 }
 
 /* ===== SUB BAR ===== */
@@ -90,8 +90,13 @@ body {
 .back {
   position: absolute;
   left: 15px;
-  font-size: 22px;
+  font-size: 16px;
   cursor: pointer;
+}
+
+.title-text {
+  margin: 0 auto;
+  font-weight: bold;
 }
 /* rechter zone = hartje */
 .item .fav {
