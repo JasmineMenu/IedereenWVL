@@ -8,6 +8,7 @@ let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 let currentTheme = null;
 let currentAudio = null;
 
+let audioCache = new Set();
 
 // =======================
 // HELPERS
@@ -19,35 +20,37 @@ function cleanPath(fileName) {
 function vibrate() {
   if (navigator.vibrate) navigator.vibrate(20);
 }
-const audioCache = new Set();
 
+// =======================
+// AUDIO PRELOAD
+// =======================
 function preload(file) {
   const url = encodeURI(file);
 
   if (audioCache.has(url)) return;
 
-  const audio = new Audio();
-  audio.src = url;
+  const audio = new Audio(url);
   audio.preload = "auto";
+  audio.load(); // belangrijk voor iOS/Safari
 
   audioCache.add(url);
 }
-// =======================
-// AUDIO
-// =======================
 
+// =======================
+// AUDIO PLAYBACK
+// =======================
 function play(file) {
   if (!file) return;
 
   const url = encodeURI(file);
 
-  // stop vorige
+  // stop vorige audio
   if (currentAudio) {
     currentAudio.pause();
+    currentAudio.currentTime = 0;
     currentAudio = null;
   }
 
-  // altijd fresh audio instance (belangrijk!)
   const audio = new Audio(url);
   currentAudio = audio;
 
@@ -55,6 +58,7 @@ function play(file) {
     console.log("Audio error:", url, err);
   });
 }
+
 // =======================
 // FAVORIETEN
 // =======================
@@ -69,7 +73,6 @@ function toggleFav(file) {
 
   localStorage.setItem("fav", JSON.stringify(favorites));
 
-  // refresh view
   if (currentTheme) renderTheme(currentTheme);
 }
 
@@ -158,12 +161,12 @@ function renderTheme(theme) {
   const content = document.getElementById("content");
   content.innerHTML = "";
 
-  // 🔥 PRELOAD HELE THEMA (hier moet het staan)
+  // 🔥 PRELOAD HELE THEMA
   data[theme].forEach(item => {
-    getAudio(item.file);
+    preload(item.file);
   });
 
-  // daarna pas renderen
+  // render items
   data[theme].forEach(item => {
     const div = document.createElement("div");
     div.className = "item";
@@ -205,7 +208,7 @@ if ("serviceWorker" in navigator) {
 }
 
 // =======================
-// SPLASH LOGIC
+// iOS AUDIO UNLOCK
 // =======================
 window.addEventListener("load", () => {
   const splash = document.getElementById("splash");
@@ -219,13 +222,16 @@ window.addEventListener("load", () => {
     return;
   }
 
+  // unlock audio (iOS fix)
+  document.body.addEventListener("touchstart", () => {
+    const unlock = new Audio();
+    unlock.play().catch(() => {});
+  }, { once: true });
+
   setTimeout(() => {
     splash.style.opacity = "0";
     splash.style.transition = "opacity 0.6s ease";
 
-    setTimeout(() => {
-      splash.remove();
-    }, 600);
-
+    setTimeout(() => splash.remove(), 600);
   }, 1800);
 });
