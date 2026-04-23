@@ -13,9 +13,8 @@ let activeTab = "themas";
 // Volgorde van thema's op de pagina
 const THEME_ORDER = [
   "Uitdrukkingen",
-  "Uitdrukkingen per regio",
-  "Maaike Cafmeyer",
   "Vervoegingen van ja",
+  "Maaike Cafmeyer",
   "Huis/Tuin/Keuken",
   "Feestdagen",
   "Het weer",
@@ -53,12 +52,6 @@ const CATEGORY_MAP = {
   "straat":       "Op straat",
   "onderweg":     "Onderweg",
   "alles":        "Alles"
-  "oostende": "Uitdrukkingen per regio",
-"ieper": "Uitdrukkingen per regio",
-"kortrijk": "Uitdrukkingen per regio",
-"brugge": "Uitdrukkingen per regio",
-"roeselare": "Uitdrukkingen per regio",
-"regio": "Uitdrukkingen per regio"
 };
 
 // =======================
@@ -336,19 +329,9 @@ function buildData() {
     }
 
     // Voeg toe aan elke gevonden categorie
-resolvedCats.forEach(cat => {
-  if (data[cat]) {
-    data[cat].push(item);
-  }
-
-  // extra: regio’s ook in aparte groep
-  const regions = ["oostende","ieper","kortrijk","brugge","roeselare"];
-  if (regions.some(r => catKeys.includes(r))) {
-    if (data["Uitdrukkingen per regio"]) {
-      data["Uitdrukkingen per regio"].push(item);
-    }
-  }
-});
+    resolvedCats.forEach(cat => {
+      if (data[cat]) data[cat].push(item);
+    });
 
     // Altijd ook in "Alles"
     if (!data["Alles"].find(i => i.file === file)) {
