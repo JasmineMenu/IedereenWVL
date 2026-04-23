@@ -1,4 +1,91 @@
-/* Innerlijke wrapper: centreert en begrenst breedte op desktop */
+@font-face {
+  font-family: WVL;
+  src: url("fonts/iedereen-wvl.ttf");
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: WVL, sans-serif;
+  background: black;
+  color: white;
+  overflow: hidden;
+  text-align: left;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ===== TOP BAR ===== */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #444;
+  color: white;
+  z-index: 1000;
+  padding: 0 15px;
+}
+
+.back {
+  position: absolute;
+  left: 15px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.title-text {
+  font-weight: bold;
+  text-align: center;
+}
+
+/* ===== SUB BAR ===== */
+.subbar {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  right: 0;
+  background: black;
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  z-index: 19;
+  border-bottom: 1px solid #333;
+}
+
+/* ===== BOTTOM BAR ===== */
+.bottombar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #444;
+  text-align: center;
+  padding: 15px;
+  z-index: 10;
+}
+
+/* ===== CONTENT AREA ===== */
+#content {
+  position: fixed;
+  top: 90px;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  background: black;
+}
+
+/* Desktop: centreer en begrens breedte */
 #content-inner {
   max-width: 700px;
   margin: 0 auto;
@@ -8,14 +95,16 @@
 .item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 15px;
   border-bottom: 1px solid #666;
   cursor: pointer;
+  width: 100%;
 }
 
 .item .label {
-  flex: 1;
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
   text-align: left;
   padding-right: 10px;
   word-spacing: normal;
@@ -23,10 +112,64 @@
   overflow-wrap: break-word;
 }
 
+.item:active {
+  background: #1f1f1f;
+  transform: scale(0.99);
+  transition: background 0.1s ease, transform 0.1s ease;
+}
+
 .item .fav,
 .item .arrow {
+  flex-grow: 0;
+  flex-shrink: 0;
   width: 30px;
   min-width: 30px;
-  flex-shrink: 0;
   text-align: right;
+  margin-left: 10px;
+}
+
+/* ===== LOGO ===== */
+.logo {
+  height: 30px;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* ===== STARTSCREEN ===== */
+#startscreen {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#start-logo {
+  width: 60%;
+  max-width: 300px;
+  height: auto;
+  cursor: pointer;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 600px) {
+  #content-inner {
+    max-width: 100%;
+  }
+
+  .item {
+    padding: 14px 15px;
+  }
+
+  .item .label,
+  .item .fav,
+  .item .arrow {
+    font-size: 18px;
+  }
+
+  .topbar, .subbar {
+    font-size: 18px;
+  }
 }
