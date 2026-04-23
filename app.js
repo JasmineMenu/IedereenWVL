@@ -115,18 +115,20 @@ div.innerHTML = `
 let currentAudio = null;
 
 function play(file) {
-  // stop vorige audio
+  if (!file) return;
+
+  const safeFile = encodeURI(file);
+
   if (currentAudio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
 
-  // nieuwe audio
-  currentAudio = new Audio(file);
+  currentAudio = new Audio(safeFile);
   currentAudio.preload = "auto";
 
   currentAudio.play().catch(err => {
-    console.log("Audio error:", err);
+    console.log("Kan audio niet afspelen:", file, err);
   });
 }
 
