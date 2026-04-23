@@ -75,9 +75,13 @@ body {
   flex: 1;
   padding-right: 10px; /* ruimte vóór hartje */
 }
+
 .item:active {
-  background: #111;
+  background: #1f1f1f;
+  transform: scale(0.99);
+  transition: background 0.1s ease, transform 0.1s ease;
 }
+
 /* rechter zone = hartje */
 .item .fav {
   width: 40px;
