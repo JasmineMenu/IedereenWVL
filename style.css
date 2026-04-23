@@ -1,0 +1,72 @@
+@font-face {
+  font-family: WVL;
+  src: url("fonts/iedereen-wvl.ttf");
+}
+
+body {
+  margin: 0;
+  font-family: WVL, sans-serif;
+  background: black;
+  color: white;
+  overflow: hidden;
+}
+
+/* TOP + BOTTOM FIXED */
+.topbar, .bottombar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  background: #444;
+  text-align: center;
+  padding: 15px;
+  font-weight: bold;
+  z-index: 10;
+}
+
+.topbar { top: 0; }
+.bottombar { bottom: 0; }
+
+/* SCROLL AREA */
+#content {
+  position: absolute;
+  top: 60px;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+}
+
+/* ITEMS */
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #666;
+  cursor: pointer;
+}
+
+.item span {
+  font-size: 14px;
+}
+
+.arrow {
+  opacity: 0.7;
+}
+
+.header {
+  text-align: center;
+  font-size: 20px;
+  padding: 10px;
+}
+
+.back {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  cursor: pointer;
+}
+
+.fav {
+  cursor: pointer;
+}
