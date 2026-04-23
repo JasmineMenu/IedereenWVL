@@ -211,6 +211,11 @@ html, body {
   display: inline-block;
 }
 
+.delete-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
 /* ===== POPUP ===== */
 .popup-overlay {
   position: fixed;
