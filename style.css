@@ -54,6 +54,25 @@ html, body {
   letter-spacing: 0.03em;
 }
 
+/* Rij met titel + delete knop op favorieten pagina */
+.topbar-with-action {
+  position: absolute;
+  right: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.delete-fav-topbtn {
+  background: none;
+  border: none;
+  font-size: 26px;
+  cursor: pointer;
+  color: #ff4444;
+  padding: 4px;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* ===== SUB BAR ===== */
 .subbar {
   position: fixed;
@@ -79,7 +98,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  height: 75px;
+  height: 80px;
   border-top: 1px solid #444;
 }
 
@@ -94,7 +113,7 @@ html, body {
   border: none;
   color: #888;
   font-family: WVL, sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   padding: 5px 0;
   width: 33.33%;
   height: 100%;
@@ -111,12 +130,12 @@ html, body {
 }
 
 .bottombar-btn svg {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
 }
 
 .bottombar-btn .tab-logo {
-  height: 28px;
+  height: 32px;
   width: auto;
   object-fit: contain;
   opacity: 0.5;
@@ -131,7 +150,7 @@ html, body {
 #content {
   position: fixed;
   top: 110px;
-  bottom: 75px;
+  bottom: 80px;
   left: 0;
   right: 0;
   overflow-y: auto;
@@ -163,7 +182,7 @@ html, body {
   min-width: 0;
   text-align: left;
   padding-right: 10px;
-  word-spacing: -0.5em;
+  word-spacing: normal;
   overflow-wrap: break-word;
 }
 
@@ -269,7 +288,7 @@ html, body {
   font-weight: bold;
   text-align: center;
   margin: 0 0 14px;
-  word-spacing: -0.5em;
+  word-spacing: -0.4em;
 }
 
 .info-intro {
@@ -278,7 +297,7 @@ html, body {
   text-align: center;
   line-height: 1.6;
   margin: 0 0 18px;
-  word-spacing: -0.5em;
+  word-spacing: -0.4em;
 }
 
 .info-body {
@@ -287,7 +306,7 @@ html, body {
   line-height: 1.7;
   color: #ccc;
   margin: 0 0 30px;
-  word-spacing: -0.5em;
+  word-spacing: -0.4em;
 }
 
 .info-wvl-logo {
