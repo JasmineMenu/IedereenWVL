@@ -11,9 +11,7 @@ body {
   overflow: hidden;
 }
 
-/* =========================
-   TOP BAR (THEMA / TITEL)
-   ========================= */
+/* ===== TOP BAR ===== */
 .topbar {
   position: fixed;
   top: 0;
@@ -26,9 +24,7 @@ body {
   z-index: 20;
 }
 
-/* =========================
-   SUB BAR (IEDEREEN WVL)
-   ========================= */
+/* ===== SUB BAR ===== */
 .subbar {
   position: fixed;
   top: 48px;
@@ -42,9 +38,7 @@ body {
   border-bottom: 1px solid #333;
 }
 
-/* =========================
-   BOTTOM BAR
-   ========================= */
+/* ===== BOTTOM BAR ===== */
 .bottombar {
   position: fixed;
   bottom: 0;
@@ -56,21 +50,17 @@ body {
   z-index: 10;
 }
 
-/* =========================
-   SCROLL CONTENT
-   ========================= */
+/* ===== CONTENT AREA ===== */
 #content {
   position: absolute;
-  top: 90px;     /* ruimte voor 2 bovenbalken */
-  bottom: 60px;  /* ruimte voor bottom bar */
+  top: 90px;
+  bottom: 60px;
   left: 0;
   right: 0;
   overflow-y: auto;
 }
 
-/* =========================
-   ITEMS (THEMA'S + MP3'S)
-   ========================= */
+/* ===== ITEMS ===== */
 .item {
   display: flex;
   justify-content: space-between;
@@ -81,41 +71,37 @@ body {
 }
 
 .item span {
-  font-size: 14px;
+  font-size: 16px;
 }
 
-/* klik feedback */
+/* touch feedback */
 .item:active {
   background: #111;
 }
 
-/* pijltje rechts */
-.arrow {
-  opacity: 0.7;
-}
-
-/* =========================
-   SUBPAGE HEADER
-   (terug + titel)
-   ========================= */
-.header {
-  position: relative;
-  text-align: center;
-  font-size: 20px;
-  padding: 15px;
-}
-
-.back {
-  position: absolute;
-  left: 10px;
-  top: 15px;
-  cursor: pointer;
-}
-
-/* =========================
-   FAVORIET HARTJE
-   ========================= */
+/* ===== FAVORIET ===== */
 .fav {
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
+}
+
+/* ===== MOBILE FIX ===== */
+html, body {
+  width: 100%;
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (max-width: 600px) {
+  .item {
+    padding: 18px;
+  }
+
+  .item span {
+    font-size: 18px;
+  }
+
+  .topbar, .subbar {
+    font-size: 18px;
+  }
 }
