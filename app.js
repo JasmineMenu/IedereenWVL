@@ -7,7 +7,8 @@ let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 
 let currentTheme = null;
 let currentAudio = null;
-let audioCache = new Map();
+
+let audioCache = new Set();
 
 // =======================
 // HELPERS
@@ -19,52 +20,46 @@ function cleanPath(fileName) {
 function vibrate() {
   if (navigator.vibrate) navigator.vibrate(20);
 }
-function getAudio(file) {
-  const url = encodeURI(file);
 
-  if (!audioCache.has(url)) {
-    const audio = new Audio(url);
-    audio.preload = "auto";
-    audioCache.set(url, audio);
-  }
-
-  return audioCache.get(url);
-}
 // =======================
-// AUDIO
+// AUDIO PRELOAD
+// =======================
+function preload(file) {
+  const url = encodeURI(file);
+  if (audioCache.has(url)) return;
+  const audio = new Audio(url);
+  audio.preload = "auto";
+  audio.load();
+  audioCache.add(url);
+}
+
+// =======================
+// AUDIO PLAY
 // =======================
 function play(file) {
   if (!file) return;
-
-  const audio = getAudio(file);
-
-  if (currentAudio && currentAudio !== audio) {
+  const url = encodeURI(file);
+  if (currentAudio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
-
-  currentAudio = audio;
-
-  audio.currentTime = 0;
-  audio.play().catch(err => {
-    console.log("Audio error:", file, err);
+  currentAudio = new Audio(url);
+  currentAudio.play().catch(err => {
+    console.log("Audio error:", url, err);
   });
 }
+
 // =======================
 // FAVORIETEN
 // =======================
 function toggleFav(file) {
   if (navigator.vibrate) navigator.vibrate(15);
-
   if (favorites.includes(file)) {
     favorites = favorites.filter(f => f !== file);
   } else {
     favorites.push(file);
   }
-
   localStorage.setItem("fav", JSON.stringify(favorites));
-
-  // refresh view
   if (currentTheme) renderTheme(currentTheme);
 }
 
@@ -72,33 +67,30 @@ function toggleFav(file) {
 // LOAD JSON
 // =======================
 async function loadSounds() {
-  const res = await fetch("mp3/Sound.json");
-  const json = await res.json();
-
-  sounds = json.results || json;
-
-  buildData();
-  renderThemes();
+  try {
+    const res = await fetch("mp3/Sound.json");
+    const json = await res.json();
+    sounds = json.results || json;
+    buildData();
+    renderThemes();
+  } catch (e) {
+    console.error("JSON load failed", e);
+  }
 }
 
 // =======================
-// GROEPEREN OP THEMA
+// BUILD DATA
 // =======================
 function buildData() {
   data = { "Alles": [] };
-
   sounds.forEach(s => {
     const file = cleanPath(s.fileName);
-
     const item = {
       file,
       title: s.soundTitle || s.dialectTitle || file
     };
-
     const theme = getTheme(file);
-
     if (!data[theme]) data[theme] = [];
-
     data[theme].push(item);
     data["Alles"].push(item);
   });
@@ -109,65 +101,66 @@ function buildData() {
 // =======================
 function getTheme(file) {
   const f = file.toLowerCase();
-
   if (f.includes("uitdruk")) return "Uitdrukkingen";
   if (f.includes("weer")) return "Het weer";
   if (f.includes("huis") || f.includes("tuin") || f.includes("keuken")) return "Huis/tuin/keuken";
   if (f.includes("resto")) return "Op restaurant";
   if (f.includes("cafe")) return "In het café";
   if (f.includes("ja_jijvorm") || f.includes("ja")) return "Vervoegingen van ja";
-
   return "Rest";
 }
 
 // =======================
-// THEMA OVERZICHT
+// THEME OVERVIEW
 // =======================
 function renderThemes() {
   currentTheme = null;
-
-  document.getElementById("title").innerText = "THEMA'S";
+  document.getElementById("title").innerHTML = "THEMA'S";
 
   const content = document.getElementById("content");
   content.innerHTML = "";
+
+  // Wrapper voor max-breedte op desktop
+  const inner = document.createElement("div");
+  inner.id = "content-inner";
+  content.appendChild(inner);
 
   Object.keys(data).forEach(theme => {
     const div = document.createElement("div");
     div.className = "item";
-
-    div.innerHTML = `<span>${theme}</span><span>➜</span>`;
+    // FIX: .label class toegevoegd zodat CSS correct werkt
+    div.innerHTML = `<span class="label">${theme}</span><span class="arrow">➜</span>`;
     div.onclick = () => renderTheme(theme);
-
-    content.appendChild(div);
+    inner.appendChild(div);
   });
 }
 
 // =======================
-// SUBTHEMA VIEW
+// SUBTHEME VIEW
 // =======================
 function renderTheme(theme) {
   currentTheme = theme;
-
-  document.getElementById("title").innerText = theme.toUpperCase();
+  document.getElementById("title").innerHTML = `
+    <div class="back" onclick="renderThemes()">← Terug</div>
+    <div class="title-text">${theme.toUpperCase()}</div>
+  `;
 
   const content = document.getElementById("content");
   content.innerHTML = "";
 
-  // 🔥 PRELOAD HELE THEMA (hier moet het staan)
-  data[theme].forEach(item => {
-    getAudio(item.file);
-  });
+  // Wrapper voor max-breedte op desktop
+  const inner = document.createElement("div");
+  inner.id = "content-inner";
+  content.appendChild(inner);
 
-  // daarna pas renderen
-  data[theme].forEach(item => {
+  (data[theme] || []).forEach(item => {
+    preload(item.file);
+
     const div = document.createElement("div");
     div.className = "item";
-
     div.innerHTML = `
       <span class="label">${item.title}</span>
-      <span class="fav">
-        ${favorites.includes(item.file) ? "❤️" : "🤍"}
-      </span>
+      <span class="fav">${favorites.includes(item.file) ? "❤️" : "🤍"}</span>
     `;
 
     const label = div.querySelector(".label");
@@ -183,7 +176,7 @@ function renderTheme(theme) {
       toggleFav(item.file);
     };
 
-    content.appendChild(div);
+    inner.appendChild(div);
   });
 }
 
@@ -200,27 +193,27 @@ if ("serviceWorker" in navigator) {
 }
 
 // =======================
-// SPLASH LOGIC
+// IOS AUDIO UNLOCK
 // =======================
-window.addEventListener("load", () => {
-  const splash = document.getElementById("splash");
+window.addEventListener("DOMContentLoaded", () => {
+  document.body.addEventListener("touchstart", () => {
+    const unlock = new Audio();
+    unlock.play().catch(() => {});
+  }, { once: true });
+});
 
-  if (!splash) return;
-
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-  if (!isMobile) {
-    splash.remove();
-    return;
-  }
-
-  setTimeout(() => {
-    splash.style.opacity = "0";
-    splash.style.transition = "opacity 0.6s ease";
-
+// =======================
+// STARTSCREEN
+// =======================
+window.addEventListener("DOMContentLoaded", () => {
+  const startScreen = document.getElementById("startscreen");
+  if (!startScreen) return;
+  startScreen.addEventListener("click", () => {
+    startScreen.style.opacity = "0";
+    startScreen.style.transition = "opacity 0.4s ease";
     setTimeout(() => {
-      splash.remove();
-    }, 600);
-
-  }, 1800);
+      startScreen.remove();
+      renderThemes();
+    }, 400);
+  });
 });
