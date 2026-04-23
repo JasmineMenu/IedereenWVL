@@ -126,7 +126,6 @@ html, body {
 }
 
 .splash-logo {
-  width: 70vw;       /* belangrijk: responsive */
-  max-width: 420px;  /* desktop cap */
+  max-width: 70%;
   height: auto;
 }
