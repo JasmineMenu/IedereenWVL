@@ -26,13 +26,10 @@ function vibrate() {
 // =======================
 function preload(file) {
   const url = encodeURI(file);
-
   if (audioCache.has(url)) return;
-
   const audio = new Audio(url);
   audio.preload = "auto";
   audio.load();
-
   audioCache.add(url);
 }
 
@@ -41,16 +38,12 @@ function preload(file) {
 // =======================
 function play(file) {
   if (!file) return;
-
   const url = encodeURI(file);
-
   if (currentAudio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
-
   currentAudio = new Audio(url);
-
   currentAudio.play().catch(err => {
     console.log("Audio error:", url, err);
   });
@@ -61,15 +54,12 @@ function play(file) {
 // =======================
 function toggleFav(file) {
   if (navigator.vibrate) navigator.vibrate(15);
-
   if (favorites.includes(file)) {
     favorites = favorites.filter(f => f !== file);
   } else {
     favorites.push(file);
   }
-
   localStorage.setItem("fav", JSON.stringify(favorites));
-
   if (currentTheme) renderTheme(currentTheme);
 }
 
@@ -80,9 +70,7 @@ async function loadSounds() {
   try {
     const res = await fetch("mp3/Sound.json");
     const json = await res.json();
-
     sounds = json.results || json;
-
     buildData();
     renderThemes();
   } catch (e) {
@@ -95,19 +83,14 @@ async function loadSounds() {
 // =======================
 function buildData() {
   data = { "Alles": [] };
-
   sounds.forEach(s => {
     const file = cleanPath(s.fileName);
-
     const item = {
       file,
       title: s.soundTitle || s.dialectTitle || file
     };
-
     const theme = getTheme(file);
-
     if (!data[theme]) data[theme] = [];
-
     data[theme].push(item);
     data["Alles"].push(item);
   });
@@ -118,14 +101,12 @@ function buildData() {
 // =======================
 function getTheme(file) {
   const f = file.toLowerCase();
-
   if (f.includes("uitdruk")) return "Uitdrukkingen";
   if (f.includes("weer")) return "Het weer";
   if (f.includes("huis") || f.includes("tuin") || f.includes("keuken")) return "Huis/tuin/keuken";
   if (f.includes("resto")) return "Op restaurant";
   if (f.includes("cafe")) return "In het café";
   if (f.includes("ja_jijvorm") || f.includes("ja")) return "Vervoegingen van ja";
-
   return "Rest";
 }
 
@@ -134,20 +115,23 @@ function getTheme(file) {
 // =======================
 function renderThemes() {
   currentTheme = null;
-
   document.getElementById("title").innerHTML = "THEMA'S";
 
   const content = document.getElementById("content");
   content.innerHTML = "";
 
+  // Wrapper voor max-breedte op desktop
+  const inner = document.createElement("div");
+  inner.id = "content-inner";
+  content.appendChild(inner);
+
   Object.keys(data).forEach(theme => {
     const div = document.createElement("div");
     div.className = "item";
-
-    div.innerHTML = `<span>${theme}</span><span>➜</span>`;
+    // FIX: .label class toegevoegd zodat CSS correct werkt
+    div.innerHTML = `<span class="label">${theme}</span><span class="arrow">➜</span>`;
     div.onclick = () => renderTheme(theme);
-
-    content.appendChild(div);
+    inner.appendChild(div);
   });
 }
 
@@ -156,7 +140,6 @@ function renderThemes() {
 // =======================
 function renderTheme(theme) {
   currentTheme = theme;
-
   document.getElementById("title").innerHTML = `
     <div class="back" onclick="renderThemes()">← terug</div>
     <div class="title-text">${theme.toUpperCase()}</div>
@@ -165,17 +148,19 @@ function renderTheme(theme) {
   const content = document.getElementById("content");
   content.innerHTML = "";
 
+  // Wrapper voor max-breedte op desktop
+  const inner = document.createElement("div");
+  inner.id = "content-inner";
+  content.appendChild(inner);
+
   (data[theme] || []).forEach(item => {
     preload(item.file);
 
     const div = document.createElement("div");
     div.className = "item";
-
     div.innerHTML = `
       <span class="label">${item.title}</span>
-      <span class="fav">
-        ${favorites.includes(item.file) ? "❤️" : "🤍"}
-      </span>
+      <span class="fav">${favorites.includes(item.file) ? "❤️" : "🤍"}</span>
     `;
 
     const label = div.querySelector(".label");
@@ -191,7 +176,7 @@ function renderTheme(theme) {
       toggleFav(item.file);
     };
 
-    content.appendChild(div);
+    inner.appendChild(div);
   });
 }
 
@@ -222,13 +207,10 @@ window.addEventListener("DOMContentLoaded", () => {
 // =======================
 window.addEventListener("DOMContentLoaded", () => {
   const startScreen = document.getElementById("startscreen");
-
   if (!startScreen) return;
-
   startScreen.addEventListener("click", () => {
     startScreen.style.opacity = "0";
     startScreen.style.transition = "opacity 0.4s ease";
-
     setTimeout(() => {
       startScreen.remove();
       renderThemes();
