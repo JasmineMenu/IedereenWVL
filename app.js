@@ -215,12 +215,28 @@ window.addEventListener("load", () => {
 
   if (!splash) return;
 
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-  if (!isMobile) {
+  // 🖥 desktop → direct weg
+  if (window.innerWidth > 768) {
     splash.remove();
     return;
   }
+
+  //  mobile → audio unlock (iOS fix)
+  document.body.addEventListener("touchstart", () => {
+    const unlock = new Audio();
+    unlock.play().catch(() => {});
+  }, { once: true });
+
+  //  fade out splash
+  setTimeout(() => {
+    splash.style.opacity = "0";
+    splash.style.transition = "opacity 0.6s ease";
+
+    setTimeout(() => {
+      splash.remove();
+    }, 600);
+  }, 1800);
+});
 
   // unlock audio (iOS fix)
   document.body.addEventListener("touchstart", () => {
