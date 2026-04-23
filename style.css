@@ -9,7 +9,6 @@ body {
   background: black;
   color: white;
   overflow: hidden;
-  /* Zorg dat tekst nooit justified wordt */
   text-align: left;
 }
 
@@ -78,26 +77,28 @@ body {
   overflow-y: auto;
 }
 
+/* Innerlijke wrapper: centreert en begrenst breedte op desktop */
+#content-inner {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
 /* ===== ITEMS ===== */
 .item {
   display: flex;
   align-items: center;
+  justify-content: space-between; /* label links, fav rechts */
   padding: 15px;
   border-bottom: 1px solid #666;
   cursor: pointer;
-  /* Voorkomt dat flex de tekst uitspreidt */
-  justify-content: flex-start;
 }
 
-/* Linker zone = geluid/label */
 .item .label {
   flex: 1;
   text-align: left;
   padding-right: 10px;
-  /* Forceer normale letterspacing en word-spacing */
   word-spacing: normal;
   letter-spacing: normal;
-  /* Voorkomt tekstafbreking of justification */
   white-space: normal;
   overflow-wrap: break-word;
 }
@@ -108,19 +109,14 @@ body {
   transition: background 0.1s ease, transform 0.1s ease;
 }
 
-/* Rechter zone = hartje/pijl */
 .item .fav {
-  /* Vaste breedte én flex-shrink: 0 zodat het nooit inkrimpt */
   width: 30px;
   min-width: 30px;
   flex-shrink: 0;
   text-align: right;
-  /* Geen extra ruimte tussen icoon en rand */
-  margin-left: auto;
-  padding-left: 8px;
 }
 
-/* ===== MOBILE FIX ===== */
+/* ===== MOBILE ===== */
 html, body {
   width: 100%;
   height: 100%;
@@ -128,6 +124,10 @@ html, body {
 }
 
 @media (max-width: 600px) {
+  #content-inner {
+    max-width: 100%; /* volledige breedte op mobile */
+  }
+
   .item {
     padding: 12px 15px;
   }
@@ -136,7 +136,6 @@ html, body {
     font-size: 18px;
   }
 
-  /* Pijltje op mobile: gegarandeerde ruimte */
   .item .fav {
     width: 36px;
     min-width: 36px;
