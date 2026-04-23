@@ -433,7 +433,7 @@ function renderFavorieten() {
     <div class="title-text">FAVORIETEN</div>
     <div class="topbar-with-action">
       <button class="delete-fav-topbtn" onclick="confirmDeleteFavs()" title="Verwijder alle favorieten">
-  <img src="img/delete.png" alt="Verwijder" class="delete-icon">
+  <img src="img/delete.svg" alt="Verwijder" class="delete-icon">
 </button>
     </div>
   `;
