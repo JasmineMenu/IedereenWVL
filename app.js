@@ -1,8 +1,62 @@
+// =======================
+// STATE
+// =======================
 let sounds = [];
 let data = {};
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 
 let currentTheme = null;
+let currentAudio = null;
+
+// =======================
+// HELPERS
+// =======================
+function cleanPath(fileName) {
+  return ("mp3/" + fileName).replace(/\\/g, "/");
+}
+
+function vibrate() {
+  if (navigator.vibrate) navigator.vibrate(20);
+}
+
+// =======================
+// AUDIO
+// =======================
+function play(file) {
+  console.log("TRY PLAY:", file);
+
+  const url = new URL(file, window.location.href).href;
+  console.log("FULL URL:", url);
+
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+
+  currentAudio = new Audio(url);
+
+  currentAudio.play().catch(err => {
+    console.log("AUDIO FAIL:", err, url);
+  });
+}
+
+// =======================
+// FAVORIETEN
+// =======================
+function toggleFav(file) {
+  if (navigator.vibrate) navigator.vibrate(15);
+
+  if (favorites.includes(file)) {
+    favorites = favorites.filter(f => f !== file);
+  } else {
+    favorites.push(file);
+  }
+
+  localStorage.setItem("fav", JSON.stringify(favorites));
+
+  // refresh view
+  if (currentTheme) renderTheme(currentTheme);
+}
 
 // =======================
 // LOAD JSON
@@ -11,7 +65,6 @@ async function loadSounds() {
   const res = await fetch("mp3/Sound.json");
   const json = await res.json();
 
-  // soms zit data in results
   sounds = json.results || json;
 
   buildData();
@@ -25,7 +78,7 @@ function buildData() {
   data = { "Alles": [] };
 
   sounds.forEach(s => {
-    const file = "mp3/" + s.fileName;
+    const file = cleanPath(s.fileName);
 
     const item = {
       file,
@@ -85,10 +138,19 @@ function renderThemes() {
 function renderTheme(theme) {
   currentTheme = theme;
 
-  // topbar = titel + back
-  document.getElementById("title").innerHTML =
-    `<span onclick="renderThemes()" style="position:absolute; left:10px;">←</span>
-     ${theme.toUpperCase()}`;
+  // topbar
+  const title = document.getElementById("title");
+  title.innerHTML = "";
+
+  const back = document.createElement("span");
+  back.innerText = "←";
+  back.style.position = "absolute";
+  back.style.left = "10px";
+  back.style.cursor = "pointer";
+  back.onclick = renderThemes;
+
+  title.appendChild(back);
+  title.appendChild(document.createTextNode(theme.toUpperCase()));
 
   const content = document.getElementById("content");
   content.innerHTML = "";
@@ -98,45 +160,65 @@ function renderTheme(theme) {
     div.className = "item";
 
     div.innerHTML = `
-      <span onclick="play('${item.file}')">${item.title}</span>
-      <span class="fav" onclick="toggleFav('${item.file}')">
+      <span class="label">${item.title}</span>
+      <span class="fav">
         ${favorites.includes(item.file) ? "❤️" : "🤍"}
       </span>
     `;
+
+    const label = div.querySelector(".label");
+    const fav = div.querySelector(".fav");
+
+    // 🎵 play
+    label.onclick = () => {
+      vibrate();
+      play(item.file);
+    };
+
+    // ❤️ fav
+    fav.onclick = (e) => {
+      e.stopPropagation();
+      toggleFav(item.file);
+    };
 
     content.appendChild(div);
   });
 }
 
 // =======================
-// AUDIO
-// =======================
-function play(file) {
-  const audio = new Audio(file);
-  audio.play();
-}
-
-// =======================
-// FAVORIETEN
-// =======================
-function toggleFav(file) {
-  if (favorites.includes(file)) {
-    favorites = favorites.filter(f => f !== file);
-  } else {
-    favorites.push(file);
-  }
-
-  localStorage.setItem("fav", JSON.stringify(favorites));
-
-  if (currentTheme) renderTheme(currentTheme);
-}
-
-// =======================
-// START
+// START APP
 // =======================
 loadSounds();
 
+// =======================
+// SERVICE WORKER
+// =======================
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
 }
 
+// =======================
+// SPLASH LOGIC
+// =======================
+window.addEventListener("load", () => {
+  const splash = document.getElementById("splash");
+
+  if (!splash) return;
+
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+  if (!isMobile) {
+    splash.remove();
+    return;
+  }
+
+  setTimeout(() => {
+    splash.style.opacity = "0";
+    splash.style.transition = "opacity 0.6s ease";
+
+    setTimeout(() => {
+      splash.remove();
+    }, 600);
+
+  }, 1800);
+});

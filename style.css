@@ -65,24 +65,28 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
+  padding: 18px 16px;
   border-bottom: 1px solid #666;
   cursor: pointer;
 }
 
-.item span {
-  font-size: 16px;
+/* linker zone = geluid */
+.item .label {
+  flex: 1;
+  padding-right: 10px; /* ruimte vóór hartje */
 }
 
-/* touch feedback */
 .item:active {
-  background: #111;
+  background: #1f1f1f;
+  transform: scale(0.99);
+  transition: background 0.1s ease, transform 0.1s ease;
 }
 
-/* ===== FAVORIET ===== */
-.fav {
-  cursor: pointer;
-  font-size: 18px;
+/* rechter zone = hartje */
+.item .fav {
+  width: 40px;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 /* ===== MOBILE FIX ===== */
@@ -110,4 +114,19 @@ html, body {
   height: 30px;
   max-height: 100%;
   object-fit: contain;
+}
+#splash {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.splash-logo {
+  width: 70vw;       /* belangrijk: responsive */
+  max-width: 420px;  /* desktop cap */
+  height: auto;
 }
