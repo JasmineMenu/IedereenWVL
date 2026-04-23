@@ -150,7 +150,7 @@ html, body {
   text-align: left;
   padding-right: 10px;
   word-spacing: -0.5em;   /* verwijdert bijna de volledige font-spatie */
-  letter-spacing: 0.05em; /* kleine compensatie voor leesbaarheid */
+  letter-spacing: 0.1em; /* kleine compensatie voor leesbaarheid */
   overflow-wrap: break-word;
 }
 
