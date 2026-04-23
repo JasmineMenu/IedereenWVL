@@ -8,7 +8,7 @@ let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 let currentTheme = null;
 let currentAudio = null;
 let audioCache = new Set();
-let activeTab = "themas"; // 'themas' | 'favorieten' | 'info'
+let activeTab = "themas";
 
 // =======================
 // HELPERS
@@ -21,7 +21,15 @@ function vibrate() {
   if (navigator.vibrate) navigator.vibrate(20);
 }
 
-// SVG hartje voor items (rood = aan, grijs omlijnd = uit)
+// Spaties fixen: elk woord in eigen span zodat font-spatie niet gebruikt wordt
+function fixSpacing(text) {
+  return String(text)
+    .split(" ")
+    .map(w => `<span>${w}</span>`)
+    .join(" ");
+}
+
+// SVG hartje voor items
 function heartSVG(filled) {
   const color = filled ? "#e8192c" : "none";
   const stroke = filled ? "#e8192c" : "#aaa";
@@ -43,7 +51,7 @@ function bookSVG(active) {
   </svg>`;
 }
 
-// SVG hartje voor favorieten tab (kleiner, dunner)
+// SVG hartje voor tab
 function tabHeartSVG(active) {
   const c = active ? "white" : "#888";
   return `<svg viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -114,7 +122,7 @@ function renderBottombar() {
 }
 
 // =======================
-// POPUP: VERWIJDER FAVORIETEN
+// POPUP
 // =======================
 function confirmDeleteFavs() {
   const overlay = document.createElement("div");
@@ -200,7 +208,7 @@ function renderThemes() {
   Object.keys(data).forEach(theme => {
     const div = document.createElement("div");
     div.className = "item";
-    div.innerHTML = `<span class="label">${theme}</span><span class="arrow">➜</span>`;
+    div.innerHTML = `<span class="label">${fixSpacing(theme)}</span><span class="arrow">➜</span>`;
     div.onclick = () => renderTheme(theme);
     inner.appendChild(div);
   });
@@ -215,7 +223,7 @@ function renderTheme(theme) {
   currentTheme = theme;
   document.getElementById("title").innerHTML = `
     <div class="back" onclick="renderThemes()">← Terug</div>
-    <div class="title-text">${theme.toUpperCase()}</div>
+    <div class="title-text">${fixSpacing(theme.toUpperCase())}</div>
   `;
 
   const content = document.getElementById("content");
@@ -230,7 +238,7 @@ function renderTheme(theme) {
     const div = document.createElement("div");
     div.className = "item";
     div.innerHTML = `
-      <span class="label">${item.title}</span>
+      <span class="label">${fixSpacing(item.title)}</span>
       <span class="fav">${heartSVG(favorites.includes(item.file))}</span>
     `;
     div.querySelector(".label").onclick = () => { vibrate(); play(item.file); };
@@ -247,9 +255,13 @@ function renderTheme(theme) {
 function renderFavorieten() {
   activeTab = "favorieten";
   currentTheme = null;
+
   document.getElementById("title").innerHTML = `
     <div class="back" onclick="renderThemes()">← Terug</div>
     <div class="title-text">FAVORIETEN</div>
+    <div class="topbar-with-action">
+      <button class="delete-fav-topbtn" onclick="confirmDeleteFavs()" title="Verwijder alle favorieten">🗑️</button>
+    </div>
   `;
 
   const content = document.getElementById("content");
@@ -270,22 +282,16 @@ function renderFavorieten() {
 
   if (favItems.length === 0) {
     const empty = document.createElement("div");
-    empty.style.cssText = "text-align:center; padding: 40px 20px; color: #888; font-size: 18px; word-spacing: normal;";
+    empty.style.cssText = "text-align:center; padding: 40px 20px; color: #888; font-size: 18px;";
     empty.textContent = "Nog geen favorieten toegevoegd.";
     inner.appendChild(empty);
   } else {
-    // Verwijder knop bovenaan
-    const delBtn = document.createElement("div");
-    delBtn.style.cssText = "text-align:right; padding: 10px 15px 0;";
-    delBtn.innerHTML = `<button onclick="confirmDeleteFavs()" style="background:none;border:none;color:#ff6b6b;font-family:WVL,sans-serif;font-size:13px;cursor:pointer;">🗑 Verwijder alle favorieten</button>`;
-    inner.appendChild(delBtn);
-
     favItems.forEach(item => {
       preload(item.file);
       const div = document.createElement("div");
       div.className = "item";
       div.innerHTML = `
-        <span class="label">${item.title}</span>
+        <span class="label">${fixSpacing(item.title)}</span>
         <span class="fav">${heartSVG(true)}</span>
       `;
       div.querySelector(".label").onclick = () => { vibrate(); play(item.file); };
@@ -321,20 +327,16 @@ function renderInfo() {
     <div class="info-logo-row">
       <img src="img/logo.svg" alt="Iedereen West-Vlaams">
     </div>
-
-    <p class="info-section-title">Over West-Vlamingen</p>
-    <p class="info-intro">Het zijn nogal levensgenieters: ze weten alles van lekker eten en drinken, van cultureel én sportief ontspannen.</p>
-    <p class="info-body">Levenskwaliteit is er ook genoeg in de enige provincie aan de zee: met de uitgestrekte provinciale domeinen en de prachtige fiets- en wandelpaden in de polders, de heuvels of langs de Leie. Daarenboven zijn West-Vlamingen een zeer ondernemend volkje. Stil zitten staat niet in hun woordenboek. Vwoert'doen daarentegen wel...</p>
-
+    <p class="info-section-title">${fixSpacing("Over West-Vlamingen")}</p>
+    <p class="info-intro">${fixSpacing("Het zijn nogal levensgenieters: ze weten alles van lekker eten en drinken, van cultureel én sportief ontspannen.")}</p>
+    <p class="info-body">${fixSpacing("Levenskwaliteit is er ook genoeg in de enige provincie aan de zee: met de uitgestrekte provinciale domeinen en de prachtige fiets- en wandelpaden in de polders, de heuvels of langs de Leie. Daarenboven zijn West-Vlamingen een zeer ondernemend volkje. Stil zitten staat niet in hun woordenboek. Vwoert'doen daarentegen wel...")}</p>
     <div class="info-wvl-logo">
       <img src="img/logo_wvl@2x.png" alt="West-Vlaanderen">
     </div>
-
     <hr class="info-divider">
-
-    <p class="info-section-title">Over de app</p>
-    <p class="info-intro">Verras vriend en vijand met de leukste West-Vlaamse woorden en uitspraken.</p>
-    <p class="info-body">Voor elke situatie en bij elke gelegenheid kan je vanaf nu uitpakken met een perfecte West-Vlaamse tongval. Onderweg, op café of restaurant, in de winkel, ...</p>
+    <p class="info-section-title">${fixSpacing("Over de app")}</p>
+    <p class="info-intro">${fixSpacing("Verras vriend en vijand met de leukste West-Vlaamse woorden en uitspraken.")}</p>
+    <p class="info-body">${fixSpacing("Voor elke situatie en bij elke gelegenheid kan je vanaf nu uitpakken met een perfecte West-Vlaamse tongval. Onderweg, op café of restaurant, in de winkel, ...")}</p>
   `;
   content.appendChild(inner);
 
