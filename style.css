@@ -1,0 +1,107 @@
+@font-face {
+  font-family: WVL;
+  src: url("fonts/iedereen-wvl.ttf");
+}
+
+body {
+  margin: 0;
+  font-family: WVL, sans-serif;
+  background: black;
+  color: white;
+  overflow: hidden;
+}
+
+/* ===== TOP BAR ===== */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #444;
+  text-align: center;
+  padding: 12px;
+  font-weight: bold;
+  z-index: 20;
+}
+
+/* ===== SUB BAR ===== */
+.subbar {
+  position: fixed;
+  top: 48px;
+  left: 0;
+  right: 0;
+  background: black;
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  z-index: 19;
+  border-bottom: 1px solid #333;
+}
+
+/* ===== BOTTOM BAR ===== */
+.bottombar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #444;
+  text-align: center;
+  padding: 15px;
+  z-index: 10;
+}
+
+/* ===== CONTENT AREA ===== */
+#content {
+  position: absolute;
+  top: 90px;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+}
+
+/* ===== ITEMS ===== */
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #666;
+  cursor: pointer;
+}
+
+.item span {
+  font-size: 16px;
+}
+
+/* touch feedback */
+.item:active {
+  background: #111;
+}
+
+/* ===== FAVORIET ===== */
+.fav {
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* ===== MOBILE FIX ===== */
+html, body {
+  width: 100%;
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (max-width: 600px) {
+  .item {
+    padding: 18px;
+  }
+
+  .item span {
+    font-size: 18px;
+  }
+
+  .topbar, .subbar {
+    font-size: 18px;
+  }
+}
