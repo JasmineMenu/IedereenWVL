@@ -134,7 +134,10 @@ function getTheme(file) {
 function renderThemes() {
   currentTheme = null;
 
-document.getElementById("title").innerHTML = "THEMA'S";
+document.getElementById("title").innerHTML = `
+  <div class="back" onclick="renderThemes()">← terug</div>
+  <div class="title-text">${theme.toUpperCase()}</div>
+`;
 
   const content = document.getElementById("content");
   content.innerHTML = "";
