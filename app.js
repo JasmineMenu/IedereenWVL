@@ -145,7 +145,16 @@ window.addEventListener("load", () => {
 
   if (!splash) return;
 
-  // iets langer en stabieler gevoel
+  // 📱 detecteer mobiel
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+  if (!isMobile) {
+    // 🖥 desktop → meteen verwijderen
+    splash.remove();
+    return;
+  }
+
+  // 📱 mobiel → normale splash flow
   setTimeout(() => {
     splash.style.opacity = "0";
     splash.style.transition = "opacity 0.6s ease";
@@ -154,5 +163,5 @@ window.addEventListener("load", () => {
       splash.remove();
     }, 600);
 
-  }, 1800); // ⬅️ langer zichtbaar (1.8s)
+  }, 1800);
 });
