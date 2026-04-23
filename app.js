@@ -31,30 +31,27 @@ function preload(file) {
 
   const audio = new Audio(url);
   audio.preload = "auto";
-  audio.load(); // belangrijk voor iOS/Safari
+  audio.load();
 
   audioCache.add(url);
 }
 
 // =======================
-// AUDIO PLAYBACK
+// AUDIO PLAY
 // =======================
 function play(file) {
   if (!file) return;
 
   const url = encodeURI(file);
 
-  // stop vorige audio
   if (currentAudio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
-    currentAudio = null;
   }
 
-  const audio = new Audio(url);
-  currentAudio = audio;
+  currentAudio = new Audio(url);
 
-  audio.play().catch(err => {
+  currentAudio.play().catch(err => {
     console.log("Audio error:", url, err);
   });
 }
@@ -80,17 +77,21 @@ function toggleFav(file) {
 // LOAD JSON
 // =======================
 async function loadSounds() {
-  const res = await fetch("mp3/Sound.json");
-  const json = await res.json();
+  try {
+    const res = await fetch("mp3/Sound.json");
+    const json = await res.json();
 
-  sounds = json.results || json;
+    sounds = json.results || json;
 
-  buildData();
-  renderThemes();
+    buildData();
+    renderThemes();
+  } catch (e) {
+    console.error("JSON load failed", e);
+  }
 }
 
 // =======================
-// GROEPEREN OP THEMA
+// BUILD DATA
 // =======================
 function buildData() {
   data = { "Alles": [] };
@@ -129,15 +130,12 @@ function getTheme(file) {
 }
 
 // =======================
-// THEMA OVERZICHT
+// THEME OVERVIEW
 // =======================
 function renderThemes() {
   currentTheme = null;
 
-document.getElementById("title").innerHTML = `
-  <div class="back" onclick="renderThemes()">← terug</div>
-  <div class="title-text">${theme.toUpperCase()}</div>
-`;
+  document.getElementById("title").innerHTML = "THEMA'S";
 
   const content = document.getElementById("content");
   content.innerHTML = "";
@@ -154,26 +152,22 @@ document.getElementById("title").innerHTML = `
 }
 
 // =======================
-// SUBTHEMA VIEW
+// SUBTHEME VIEW
 // =======================
 function renderTheme(theme) {
   currentTheme = theme;
 
-document.getElementById("title").innerHTML = `
-  <span class="back" onclick="renderThemes()">←</span>
-  <span>${theme.toUpperCase()}</span>
-`;
+  document.getElementById("title").innerHTML = `
+    <div class="back" onclick="renderThemes()">← terug</div>
+    <div class="title-text">${theme.toUpperCase()}</div>
+  `;
 
   const content = document.getElementById("content");
   content.innerHTML = "";
 
-  // 🔥 PRELOAD HELE THEMA
-  data[theme].forEach(item => {
+  (data[theme] || []).forEach(item => {
     preload(item.file);
-  });
 
-  // render items
-  data[theme].forEach(item => {
     const div = document.createElement("div");
     div.className = "item";
 
@@ -214,32 +208,30 @@ if ("serviceWorker" in navigator) {
 }
 
 // =======================
-// iOS AUDIO UNLOCK
+// IOS AUDIO UNLOCK
 // =======================
-
+window.addEventListener("DOMContentLoaded", () => {
   document.body.addEventListener("touchstart", () => {
     const unlock = new Audio();
     unlock.play().catch(() => {});
   }, { once: true });
-
+});
 
 // =======================
-// Startscreen
+// STARTSCREEN
 // =======================
+window.addEventListener("DOMContentLoaded", () => {
+  const startScreen = document.getElementById("startscreen");
 
-const startScreen = document.getElementById("startscreen");
+  if (!startScreen) return;
 
-if (startScreen) {
   startScreen.addEventListener("click", () => {
     startScreen.style.opacity = "0";
     startScreen.style.transition = "opacity 0.4s ease";
 
     setTimeout(() => {
       startScreen.remove();
-
-      // 🚀 BELANGRIJK: start app opnieuw
       renderThemes();
-
     }, 400);
   });
-}
+});
