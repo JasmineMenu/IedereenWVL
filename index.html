@@ -4391,10 +4391,12 @@
     const btn = document.createElement("button");
     btn.textContent = item.soundTitle;
 
-    btn.onclick = () => {
-      const audio = new Audio("mp3/" + item.fileName);
-      audio.play();
-    };
+const audio = new Audio();
+
+btn.onclick = () => {
+  audio.src = "mp3/" + item.fileName;
+  audio.play();
+};
 
     container.appendChild(btn);
   });
