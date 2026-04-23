@@ -97,13 +97,14 @@ function renderTheme(theme) {
     const div = document.createElement("div");
     div.className = "item";
 
-    div.innerHTML = `
-      <span onclick="play('${item.file}')">${item.title}</span>
-      <span class="fav" onclick="toggleFav('${item.file}')">
-        ${favorites.includes(item.file) ? "❤️" : "🤍"}
-      </span>
-    `;
+div.innerHTML = `
+  <span class="label">${item.title}</span>
+  <span class="fav" onclick="toggleFav('${item.file}')">
+    ${favorites.includes(item.file) ? "❤️" : "🤍"}
+  </span>
+`;
 
+    div.querySelector(".label").onclick = () => play(item.file);
     content.appendChild(div);
   });
 }
@@ -111,9 +112,22 @@ function renderTheme(theme) {
 // =======================
 // AUDIO
 // =======================
+let currentAudio = null;
+
 function play(file) {
-  const audio = new Audio(file);
-  audio.play();
+  // stop vorige audio
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+
+  // nieuwe audio
+  currentAudio = new Audio(file);
+  currentAudio.preload = "auto";
+
+  currentAudio.play().catch(err => {
+    console.log("Audio error:", err);
+  });
 }
 
 // =======================
