@@ -34,29 +34,27 @@ html, body {
   color: white;
   z-index: 1000;
   padding: 0 15px;
-  font-size: 20px;
   font-weight: bold;
 }
 
 .back {
   position: absolute;
   left: 15px;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  text-transform: capitalize;
 }
 
 .title-text {
   font-weight: bold;
   text-align: center;
-  font-size: 20px;
+  font-size: 22px;
 }
 
 /* ===== SUB BAR ===== */
 .subbar {
   position: fixed;
-  top: 55px;        /* sluit aan op nieuwe topbar hoogte */
+  top: 55px;
   left: 0;
   right: 0;
   background: black;
@@ -67,25 +65,72 @@ html, body {
   border-bottom: 1px solid #333;
 }
 
+/* ===== BOTTOM BAR ===== */
+.bottombar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #444;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 25px;
+  height: 70px;
+}
+
+.bottombar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: white;
+  font-family: WVL, sans-serif;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottombar-btn:active {
+  background: #555;
+}
+
+.bottombar-btn .btn-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.bottombar-btn img.btn-icon {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+}
+
 /* ===== CONTENT AREA ===== */
 #content {
   position: fixed;
-  top: 100px;       /* topbar (55) + subbar (~45) */
-  bottom: 60px;
+  top: 100px;
+  bottom: 70px;
   left: 0;
   right: 0;
   overflow-y: auto;
   background: black;
 }
 
-/* Eerste item wat ruimte geven zodat het niet tegen de balk plakt */
-#content-inner .item:first-child {
-  margin-top: 6px;
-}
-/* Desktop: centreer en begrens breedte */
 #content-inner {
   max-width: 700px;
   margin: 0 auto;
+}
+
+#content-inner .item:first-child {
+  margin-top: 6px;
 }
 
 /* ===== ITEMS ===== */
@@ -104,8 +149,7 @@ html, body {
   min-width: 0;
   text-align: left;
   padding-right: 10px;
-  word-spacing: -0.5em;   /* verwijdert bijna de volledige font-spatie */
-  letter-spacing: 0.05em; /* kleine compensatie voor leesbaarheid */
+  word-spacing: -0.5em;
   overflow-wrap: break-word;
 }
 
@@ -123,6 +167,75 @@ html, body {
   min-width: 30px;
   text-align: right;
   margin-left: 10px;
+}
+
+/* ===== FAVORIETEN BOTTOMBAR (extra knoppen) ===== */
+.bottombar-fav {
+  justify-content: space-between;
+}
+
+.bottombar-fav .delete-fav-btn {
+  font-size: 13px;
+  color: #ff6b6b;
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: WVL, sans-serif;
+  padding: 5px 10px;
+}
+
+/* ===== POPUP ===== */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-box {
+  background: #333;
+  border-radius: 12px;
+  padding: 30px 25px;
+  max-width: 320px;
+  width: 90%;
+  text-align: center;
+}
+
+.popup-box p {
+  font-size: 18px;
+  margin: 0 0 24px 0;
+  font-weight: bold;
+}
+
+.popup-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.popup-actions button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-family: WVL, sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.popup-actions .btn-cancel {
+  background: #555;
+  color: white;
+}
+
+.popup-actions .btn-confirm {
+  background: #ff6b6b;
+  color: white;
 }
 
 /* ===== LOGO ===== */
