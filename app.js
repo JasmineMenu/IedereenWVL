@@ -432,7 +432,9 @@ function renderFavorieten() {
     <div class="back" onclick="renderThemes()">← Terug</div>
     <div class="title-text">FAVORIETEN</div>
     <div class="topbar-with-action">
-      <button class="delete-fav-topbtn" onclick="confirmDeleteFavs()" title="Verwijder alle favorieten">🗑️</button>
+      <button class="delete-fav-topbtn" onclick="confirmDeleteFavs()" title="Verwijder alle favorieten">
+  <img src="img/delete.png" alt="Verwijder" class="delete-icon">
+</button>
     </div>
   `;
 
