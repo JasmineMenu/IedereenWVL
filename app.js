@@ -23,20 +23,20 @@ function vibrate() {
 // AUDIO
 // =======================
 function play(file) {
-  if (!file) return;
+  console.log("TRY PLAY:", file);
 
-  const safeFile = encodeURI(file);
+  const url = new URL(file, window.location.href).href;
+  console.log("FULL URL:", url);
 
   if (currentAudio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
 
-  currentAudio = new Audio(safeFile);
-  currentAudio.preload = "auto";
+  currentAudio = new Audio(url);
 
   currentAudio.play().catch(err => {
-    console.log("Audio error:", file, err);
+    console.log("AUDIO FAIL:", err, url);
   });
 }
 
