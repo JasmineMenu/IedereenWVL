@@ -141,7 +141,7 @@ function renderThemes() {
 function renderTheme(theme) {
   currentTheme = theme;
   document.getElementById("title").innerHTML = `
-    <div class="back" onclick="renderThemes()">← terug</div>
+    <div class="back" onclick="renderThemes()">← Terug</div>
     <div class="title-text">${theme.toUpperCase()}</div>
   `;
 
