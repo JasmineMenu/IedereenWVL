@@ -7,7 +7,6 @@ let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 
 let currentTheme = null;
 let currentAudio = null;
-
 let audioCache = new Set();
 
 // =======================
@@ -19,6 +18,13 @@ function cleanPath(fileName) {
 
 function vibrate() {
   if (navigator.vibrate) navigator.vibrate(20);
+}
+
+function fixSpacing(text) {
+  return text
+    .split(" ")
+    .map(word => `<span>${word}</span>`)
+    .join(" ");
 }
 
 // =======================
@@ -50,7 +56,7 @@ function play(file) {
 }
 
 // =======================
-// FAVORIETEN
+// FAVORIETEN TOGGLE
 // =======================
 function toggleFav(file) {
   if (navigator.vibrate) navigator.vibrate(15);
@@ -61,6 +67,57 @@ function toggleFav(file) {
   }
   localStorage.setItem("fav", JSON.stringify(favorites));
   if (currentTheme) renderTheme(currentTheme);
+}
+
+// =======================
+// BOTTOMBAR
+// =======================
+function renderBottombar(showDeleteFav = false) {
+  const bar = document.querySelector(".bottombar");
+
+  if (showDeleteFav) {
+    bar.innerHTML = `
+      <button class="delete-fav-btn" onclick="confirmDeleteFavs()">🗑 Verwijder alle favorieten</button>
+      <button class="bottombar-btn" onclick="renderInfo()">
+        <img src="img/logo_wvl@2x.png" class="btn-icon" alt="Info">
+      </button>
+    `;
+  } else {
+    bar.innerHTML = `
+      <button class="bottombar-btn" onclick="renderFavorieten()">
+        <span class="btn-icon">❤️</span>
+        <span>Favorieten</span>
+      </button>
+      <button class="bottombar-btn" onclick="renderInfo()">
+        <img src="img/logo_wvl@2x.png" class="btn-icon" alt="Info">
+      </button>
+    `;
+  }
+}
+
+// =======================
+// POPUP: VERWIJDER FAVORIETEN
+// =======================
+function confirmDeleteFavs() {
+  const overlay = document.createElement("div");
+  overlay.className = "popup-overlay";
+  overlay.innerHTML = `
+    <div class="popup-box">
+      <p>Ben je het zeker?</p>
+      <div class="popup-actions">
+        <button class="btn-cancel" onclick="this.closest('.popup-overlay').remove()">Annuleren</button>
+        <button class="btn-confirm" onclick="deleteAllFavs()">Verwijderen</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+function deleteAllFavs() {
+  favorites = [];
+  localStorage.setItem("fav", JSON.stringify(favorites));
+  document.querySelector(".popup-overlay")?.remove();
+  renderFavorieten();
 }
 
 // =======================
@@ -85,10 +142,7 @@ function buildData() {
   data = { "Alles": [] };
   sounds.forEach(s => {
     const file = cleanPath(s.fileName);
-    const item = {
-      file,
-      title: s.soundTitle || s.dialectTitle || file
-    };
+    const item = { file, title: s.soundTitle || s.dialectTitle || file };
     const theme = getTheme(file);
     if (!data[theme]) data[theme] = [];
     data[theme].push(item);
@@ -115,12 +169,11 @@ function getTheme(file) {
 // =======================
 function renderThemes() {
   currentTheme = null;
-  document.getElementById("title").innerHTML = "THEMA'S";
+  document.getElementById("title").innerHTML = `<div class="title-text">THEMA'S</div>`;
 
   const content = document.getElementById("content");
   content.innerHTML = "";
 
-  // Wrapper voor max-breedte op desktop
   const inner = document.createElement("div");
   inner.id = "content-inner";
   content.appendChild(inner);
@@ -128,11 +181,12 @@ function renderThemes() {
   Object.keys(data).forEach(theme => {
     const div = document.createElement("div");
     div.className = "item";
-    // FIX: .label class toegevoegd zodat CSS correct werkt
-    div.innerHTML = `<span class="label">${theme}</span><span class="arrow">➜</span>`;
+    div.innerHTML = `<span class="label">${fixSpacing(theme)}</span><span class="arrow">➜</span>`;
     div.onclick = () => renderTheme(theme);
     inner.appendChild(div);
   });
+
+  renderBottombar(false);
 }
 
 // =======================
@@ -148,36 +202,99 @@ function renderTheme(theme) {
   const content = document.getElementById("content");
   content.innerHTML = "";
 
-  // Wrapper voor max-breedte op desktop
   const inner = document.createElement("div");
   inner.id = "content-inner";
   content.appendChild(inner);
 
   (data[theme] || []).forEach(item => {
     preload(item.file);
-
     const div = document.createElement("div");
     div.className = "item";
     div.innerHTML = `
-      <span class="label">${item.title}</span>
+      <span class="label">${fixSpacing(item.title)}</span>
       <span class="fav">${favorites.includes(item.file) ? "❤️" : "🤍"}</span>
     `;
 
-    const label = div.querySelector(".label");
-    const fav = div.querySelector(".fav");
-
-    label.onclick = () => {
-      vibrate();
-      play(item.file);
-    };
-
-    fav.onclick = (e) => {
-      e.stopPropagation();
-      toggleFav(item.file);
-    };
+    div.querySelector(".label").onclick = () => { vibrate(); play(item.file); };
+    div.querySelector(".fav").onclick = (e) => { e.stopPropagation(); toggleFav(item.file); };
 
     inner.appendChild(div);
   });
+
+  renderBottombar(false);
+}
+
+// =======================
+// FAVORIETEN PAGINA
+// =======================
+function renderFavorieten() {
+  currentTheme = null;
+  document.getElementById("title").innerHTML = `
+    <div class="back" onclick="renderThemes()">← Terug</div>
+    <div class="title-text">FAVORIETEN</div>
+  `;
+
+  const content = document.getElementById("content");
+  content.innerHTML = "";
+
+  const inner = document.createElement("div");
+  inner.id = "content-inner";
+  content.appendChild(inner);
+
+  const favItems = [];
+  Object.values(data).flat().forEach(item => {
+    if (favorites.includes(item.file) && !favItems.find(i => i.file === item.file)) {
+      favItems.push(item);
+    }
+  });
+
+  if (favItems.length === 0) {
+    const empty = document.createElement("div");
+    empty.style.cssText = "text-align:center; padding: 40px 20px; color: #888; font-size: 18px;";
+    empty.textContent = "Nog geen favorieten toegevoegd.";
+    inner.appendChild(empty);
+  } else {
+    favItems.forEach(item => {
+      preload(item.file);
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <span class="label">${fixSpacing(item.title)}</span>
+        <span class="fav">${favorites.includes(item.file) ? "❤️" : "🤍"}</span>
+      `;
+      div.querySelector(".label").onclick = () => { vibrate(); play(item.file); };
+      div.querySelector(".fav").onclick = (e) => {
+        e.stopPropagation();
+        toggleFav(item.file);
+        renderFavorieten();
+      };
+      inner.appendChild(div);
+    });
+  }
+
+  renderBottombar(true);
+}
+
+// =======================
+// INFO PAGINA
+// =======================
+function renderInfo() {
+  currentTheme = null;
+  document.getElementById("title").innerHTML = `
+    <div class="back" onclick="renderThemes()">← Terug</div>
+    <div class="title-text">INFO</div>
+  `;
+
+  const content = document.getElementById("content");
+  content.innerHTML = "";
+
+  const inner = document.createElement("div");
+  inner.id = "content-inner";
+  inner.style.cssText = "padding: 30px 20px; color: #888; text-align: center; font-size: 18px;";
+  inner.textContent = "Pagina in opbouw.";
+  content.appendChild(inner);
+
+  renderBottombar(false);
 }
 
 // =======================
