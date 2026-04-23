@@ -135,3 +135,8 @@ function toggleFav(file) {
 // START
 // =======================
 loadSounds();
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
+
