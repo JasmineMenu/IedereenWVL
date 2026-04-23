@@ -236,6 +236,10 @@ if (startScreen) {
 
     setTimeout(() => {
       startScreen.remove();
+
+      // 🚀 BELANGRIJK: start app opnieuw
+      renderThemes();
+
     }, 400);
   });
 }
