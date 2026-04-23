@@ -140,3 +140,16 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
 }
 
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    const splash = document.getElementById("splash");
+    if (splash) {
+      splash.style.opacity = "0";
+      splash.style.transition = "opacity 0.4s ease";
+
+      setTimeout(() => {
+        splash.remove();
+      }, 400);
+    }
+  }, 800);
+});
