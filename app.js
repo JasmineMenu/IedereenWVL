@@ -7,14 +7,13 @@ let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 
 let currentTheme = null;
 let currentAudio = null;
-let audioCache = {};
 let activeTab = "themas";
 let quizMode = false;
 
 // Volgorde thema's
 const THEME_ORDER = [
   "Uitdrukkingen",
-  "Uitdrukkingen per regio",  // submenu
+  "Uitdrukkingen per regio",
   "Vervoegingen van ja",
   "Maaike Cafmeyer",
   "Huis/Tuin/Keuken",
@@ -23,7 +22,7 @@ const THEME_ORDER = [
   "Op restaurant",
   "In de winkel",
   "Dieren",
-  "In het café",
+  "In het caf\u00e9",
   "Op straat",
   "Onderweg",
   "Alles"
@@ -31,7 +30,6 @@ const THEME_ORDER = [
 
 const REGIO_THEMES = ["Oostende", "Ieper", "Kortrijk", "Brugge", "Roeselare"];
 
-// Mapping: JSON sleutel → display naam
 const CATEGORY_MAP = {
   "uitdrukking":    "Uitdrukkingen",
   "uitdrukkingen":  "Uitdrukkingen",
@@ -52,8 +50,8 @@ const CATEGORY_MAP = {
   "winkel":         "In de winkel",
   "dieren":         "Dieren",
   "dier":           "Dieren",
-  "cafe":           "In het café",
-  "café":           "In het café",
+  "cafe":           "In het caf\u00e9",
+  "caf\u00e9":      "In het caf\u00e9",
   "straat":         "Op straat",
   "onderweg":       "Onderweg",
   "oostende":       "Oostende",
@@ -140,13 +138,10 @@ function quizSVG(active) {
 // =======================
 // AUDIO
 // =======================
-// =======================
-// AUDIO — Blob cache met beperkte gelijktijdigheid
-// =======================
 const blobCache = {};
 
 async function preloadAll(files) {
-  const BATCH_SIZE = 10; // max 10 tegelijk
+  const BATCH_SIZE = 10;
   for (let i = 0; i < files.length; i += BATCH_SIZE) {
     const batch = files.slice(i, i + BATCH_SIZE);
     await Promise.all(batch.map(async file => {
@@ -160,7 +155,7 @@ async function preloadAll(files) {
       }
     }));
   }
-  console.log("✅ Alle audio geladen");
+  console.log("\u2705 Alle audio geladen");
 }
 
 function play(file) {
@@ -203,7 +198,7 @@ async function checkAllAudio() {
   }
   console.log(`=== KLAAR: ${errors.length} fouten op ${allItems.length} bestanden ===`);
   if (errors.length) console.table(errors);
-  else console.log("✅ Alles werkt!");
+  else console.log("\u2705 Alles werkt!");
   return errors;
 }
 window.checkAllAudio = checkAllAudio;
@@ -232,7 +227,7 @@ function toggleQuiz() {
       const b = document.createElement("div");
       b.id = "quiz-badge";
       b.className = "quiz-badge";
-b.textContent = "We gon eki kik'n ofdaj der 'ntwa van verstoan 'et";
+      b.textContent = "We gon eki kik'n ofdaj der 'ntwa van verstoan 'et";
       document.body.appendChild(b);
     }
     content.classList.add("quiz-active");
@@ -241,7 +236,6 @@ b.textContent = "We gon eki kik'n ofdaj der 'ntwa van verstoan 'et";
     content.classList.remove("quiz-active");
   }
   renderBottombar();
-  // Herladen huidige pagina om labels te wisselen
   if (currentTheme) renderTheme(currentTheme);
   else if (activeTab === "favorieten") renderFavorieten();
 }
@@ -354,7 +348,7 @@ function detectCategoryFromFile(file) {
   if (f.includes("weer"))     return "Het weer";
   if (f.includes("huis") || f.includes("tuin") || f.includes("keuken")) return "Huis/Tuin/Keuken";
   if (f.includes("resto"))    return "Op restaurant";
-  if (f.includes("cafe"))     return "In het café";
+  if (f.includes("cafe"))     return "In het caf\u00e9";
   if (f.includes("dieren") || f.includes("dier")) return "Dieren";
   if (f.includes("winkel"))   return "In de winkel";
   if (f.includes("straat"))   return "Op straat";
@@ -366,7 +360,7 @@ function detectCategoryFromFile(file) {
 }
 
 // =======================
-// ITEM RENDEREN (herbruikbaar)
+// ITEM RENDEREN
 // =======================
 function renderItem(item, onFavClick) {
   const div = document.createElement("div");
@@ -385,17 +379,10 @@ function renderItem(item, onFavClick) {
 
   label.onclick = () => {
     vibrate();
-
-    // Stop vorige timeout zodat labels niet door elkaar lopen
     if (flipTimeout) clearTimeout(flipTimeout);
-
-    // Speel audio EERST af, los van de label-animatie
     play(item.file);
-
-    // Label wisselen pas daarna
     label.innerHTML = fixSpacing(flipTitle);
     label.classList.add("showing-dialect");
-
     flipTimeout = setTimeout(() => {
       label.innerHTML = fixSpacing(displayTitle);
       label.classList.remove("showing-dialect");
@@ -427,14 +414,13 @@ function renderThemes() {
   content.appendChild(inner);
 
   THEME_ORDER.forEach(theme => {
-    // Submenu "Uitdrukkingen per regio" apart behandelen
     if (theme === "Uitdrukkingen per regio") {
       const hasRegio = REGIO_THEMES.some(r => data[r] && data[r].length > 0);
       if (!hasRegio) return;
       const div = document.createElement("div");
       div.className = "item";
       div.style.paddingLeft = "28px";
-      div.innerHTML = `<span class="label" style="color:#aaa; font-size:0.95em">${fixSpacing("Uitdrukkingen per regio")}</span><span class="arrow">➜</span>`;
+      div.innerHTML = `<span class="label" style="color:#aaa; font-size:0.95em">${fixSpacing("Uitdrukkingen per regio")}</span><span class="arrow">&#10142;</span>`;
       div.onclick = () => renderRegioMenu();
       inner.appendChild(div);
       return;
@@ -443,7 +429,7 @@ function renderThemes() {
     if (!data[theme] || data[theme].length === 0) return;
     const div = document.createElement("div");
     div.className = "item";
-    div.innerHTML = `<span class="label">${fixSpacing(theme)}</span><span class="arrow">➜</span>`;
+    div.innerHTML = `<span class="label">${fixSpacing(theme)}</span><span class="arrow">&#10142;</span>`;
     div.onclick = () => renderTheme(theme);
     inner.appendChild(div);
   });
@@ -457,7 +443,7 @@ function renderThemes() {
 function renderRegioMenu() {
   currentTheme = null;
   document.getElementById("title").innerHTML = `
-    <div class="back" onclick="renderThemes()">← Terug</div>
+    <div class="back" onclick="renderThemes()">&#8592; Terug</div>
     <div class="title-text">PER REGIO</div>
   `;
 
@@ -471,7 +457,7 @@ function renderRegioMenu() {
     if (!data[regio] || data[regio].length === 0) return;
     const div = document.createElement("div");
     div.className = "item";
-    div.innerHTML = `<span class="label">${fixSpacing(regio)}</span><span class="arrow">➜</span>`;
+    div.innerHTML = `<span class="label">${fixSpacing(regio)}</span><span class="arrow">&#10142;</span>`;
     div.onclick = () => renderTheme(regio);
     inner.appendChild(div);
   });
@@ -487,7 +473,7 @@ function renderTheme(theme) {
   const isRegio = REGIO_THEMES.includes(theme);
 
   document.getElementById("title").innerHTML = `
-    <div class="back" onclick="${isRegio ? 'renderRegioMenu()' : 'renderThemes()'}">← Terug</div>
+    <div class="back" onclick="${isRegio ? 'renderRegioMenu()' : 'renderThemes()'}">&#8592; Terug</div>
     <div class="title-text">${fixSpacing(theme.toUpperCase())}</div>
   `;
 
@@ -512,10 +498,10 @@ function renderFavorieten() {
   currentTheme = null;
 
   document.getElementById("title").innerHTML = `
-    <div class="back" onclick="renderThemes()">← Terug</div>
+    <div class="back" onclick="renderThemes()">&#8592; Terug</div>
     <div class="title-text">FAVORIETEN</div>
     <div class="topbar-with-action">
-      <button class="delete-fav-topbtn" onclick="confirmDeleteFavs()" title="Verwijder alle favorieten">🗑️</button>
+      <button class="delete-fav-topbtn" onclick="confirmDeleteFavs()" title="Verwijder alle favorieten">&#128465;&#65039;</button>
     </div>
   `;
 
@@ -558,7 +544,7 @@ function renderInfo() {
   activeTab = "info";
   currentTheme = null;
   document.getElementById("title").innerHTML = `
-    <div class="back" onclick="renderThemes()">← Terug</div>
+    <div class="back" onclick="renderThemes()">&#8592; Terug</div>
     <div class="title-text">INFO</div>
   `;
 
@@ -567,10 +553,9 @@ function renderInfo() {
 
   const inner = document.createElement("div");
   inner.className = "info-content";
-  // Geen logo hier — staat al vast in de subbar
   inner.innerHTML = `
     <p class="info-section-title">Over West-Vlamingen</p>
-    <p class="info-intro">Het zijn nogal levensgenieters: ze weten alles van lekker eten en drinken, van cultureel én sportief ontspannen.</p>
+    <p class="info-intro">Het zijn nogal levensgenieters: ze weten alles van lekker eten en drinken, van cultureel \u00e9n sportief ontspannen.</p>
     <p class="info-body">Levenskwaliteit is er ook genoeg in de enige provincie aan de zee: met de uitgestrekte provinciale domeinen en de prachtige fiets- en wandelpaden in de polders, de heuvels of langs de Leie. Daarenboven zijn West-Vlamingen een zeer ondernemend volkje. Stil zitten staat niet in hun woordenboek. Vwoert'doen daarentegen wel...</p>
     <div class="info-wvl-logo">
       <img src="img/logo_wvl@2x.png" alt="West-Vlaanderen">
@@ -578,7 +563,7 @@ function renderInfo() {
     <hr class="info-divider">
     <p class="info-section-title">Over de app</p>
     <p class="info-intro">Verras vriend en vijand met de leukste West-Vlaamse woorden en uitspraken.</p>
-    <p class="info-body">Voor elke situatie en bij elke gelegenheid kan je vanaf nu uitpakken met een perfecte West-Vlaamse tongval. Onderweg, op café of restaurant, in de winkel, ...</p>
+    <p class="info-body">Voor elke situatie en bij elke gelegenheid kan je vanaf nu uitpakken met een perfecte West-Vlaamse tongval. Onderweg, op caf\u00e9 of restaurant, in de winkel, ...</p>
   `;
   content.appendChild(inner);
 
@@ -610,7 +595,6 @@ window.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
       startScreen.remove();
       renderThemes();
-      // Start preload PAS na klik op startscherm
       const allFiles = [...new Set(sounds.map(s => cleanPath(s.fileName)))];
       preloadAll(allFiles);
     }, 400);
