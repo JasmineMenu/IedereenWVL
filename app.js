@@ -377,17 +377,26 @@ function renderItem(item, onFavClick) {
   `;
 
   const label = div.querySelector(".label");
+  let flipTimeout = null;
 
   label.onclick = () => {
     vibrate();
+
+    // Stop vorige timeout zodat labels niet door elkaar lopen
+    if (flipTimeout) clearTimeout(flipTimeout);
+
+    // Speel audio EERST af, los van de label-animatie
     play(item.file);
-    // Toon 2 sec de andere tekst
+
+    // Label wisselen pas daarna
     label.innerHTML = fixSpacing(flipTitle);
     label.classList.add("showing-dialect");
-    setTimeout(() => {
+
+    flipTimeout = setTimeout(() => {
       label.innerHTML = fixSpacing(displayTitle);
       label.classList.remove("showing-dialect");
-    }, 5000);  //Verander hier de lengte van de getoonde tekst in het oranje
+      flipTimeout = null;
+    }, 2000);
   };
 
   div.querySelector(".fav").onclick = (e) => {
