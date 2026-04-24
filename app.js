@@ -9,10 +9,12 @@ let currentTheme = null;
 let currentAudio = null;
 let audioCache = {};
 let activeTab = "themas";
+let quizMode = false;
 
-// Volgorde van thema's op de pagina
+// Volgorde thema's
 const THEME_ORDER = [
   "Uitdrukkingen",
+  "Uitdrukkingen per regio",  // submenu
   "Vervoegingen van ja",
   "Maaike Cafmeyer",
   "Huis/Tuin/Keuken",
@@ -27,31 +29,38 @@ const THEME_ORDER = [
   "Alles"
 ];
 
-// Mapping van JSON category-sleutels naar display-naam
+const REGIO_THEMES = ["Oostende", "Ieper", "Kortrijk", "Brugge", "Roeselare"];
+
+// Mapping: JSON sleutel → display naam
 const CATEGORY_MAP = {
-  "uitdruk":      "Uitdrukkingen",
-  "uitdrukkingen":"Uitdrukkingen",
-  "vervoeg":      "Vervoegingen van ja",
-  "ja":           "Vervoegingen van ja",
-  "maaike":       "Maaike Cafmeyer",
-  "cafmeyer":     "Maaike Cafmeyer",
-  "huis":         "Huis/Tuin/Keuken",
-  "tuin":         "Huis/Tuin/Keuken",
-  "keuken":       "Huis/Tuin/Keuken",
+  "uitdrukking":    "Uitdrukkingen",
+  "uitdrukkingen":  "Uitdrukkingen",
+  "uitdruk":        "Uitdrukkingen",
+  "vervoeg":        "Vervoegingen van ja",
+  "ja":             "Vervoegingen van ja",
+  "maaike":         "Maaike Cafmeyer",
+  "cafmeyer":       "Maaike Cafmeyer",
+  "huis":           "Huis/Tuin/Keuken",
+  "tuin":           "Huis/Tuin/Keuken",
+  "keuken":         "Huis/Tuin/Keuken",
   "huistuinkeuken": "Huis/Tuin/Keuken",
-  "feest":        "Feestdagen",
-  "feestdagen":   "Feestdagen",
-  "weer":         "Het weer",
-  "restaurant":   "Op restaurant",
-  "resto":        "Op restaurant",
-  "winkel":       "In de winkel",
-  "dieren":       "Dieren",
-  "dier":         "Dieren",
-  "cafe":         "In het café",
-  "café":         "In het café",
-  "straat":       "Op straat",
-  "onderweg":     "Onderweg",
-  "alles":        "Alles"
+  "feest":          "Feestdagen",
+  "feestdagen":     "Feestdagen",
+  "weer":           "Het weer",
+  "restaurant":     "Op restaurant",
+  "resto":          "Op restaurant",
+  "winkel":         "In de winkel",
+  "dieren":         "Dieren",
+  "dier":           "Dieren",
+  "cafe":           "In het café",
+  "café":           "In het café",
+  "straat":         "Op straat",
+  "onderweg":       "Onderweg",
+  "oostende":       "Oostende",
+  "ieper":          "Ieper",
+  "kortrijk":       "Kortrijk",
+  "brugge":         "Brugge",
+  "roeselare":      "Roeselare",
 };
 
 // =======================
@@ -66,27 +75,21 @@ function vibrate() {
 }
 
 function fixSpacing(text) {
-  return String(text)
-    .split(" ")
-    .map(w => `<span>${w}</span>`)
-    .join(" ");
+  return String(text).split(" ").map(w => `<span>${w}</span>`).join(" ");
 }
 
-// Parst "categories" veld: flexibel met spaties, komma's, aanhalingstekens
 function parseCategories(raw) {
   if (!raw) return [];
   return String(raw)
-    .replace(/['"]/g, "")        // verwijder aanhalingstekens
-    .split(/[\s,]+/)             // splits op komma's en/of spaties
+    .replace(/['"]/g, "")
+    .split(/[\s,]+/)
     .map(s => s.trim().toLowerCase())
     .filter(Boolean);
 }
 
-// Zet een category-sleutel om naar display-naam
 function resolveCategory(key) {
   const k = key.toLowerCase().trim();
   if (CATEGORY_MAP[k]) return CATEGORY_MAP[k];
-  // Gedeeltelijke match
   for (const [pattern, name] of Object.entries(CATEGORY_MAP)) {
     if (k.includes(pattern) || pattern.includes(k)) return name;
   }
@@ -124,13 +127,22 @@ function tabHeartSVG(active) {
   </svg>`;
 }
 
+function quizSVG(active) {
+  const c = active ? "#f0a500" : "#888";
+  return `<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6 8 Q6 4 10 4 L22 4 Q26 4 26 8 L26 20 Q26 24 22 24 L18 24 L12 29 L12 24 L10 24 Q6 24 6 20 Z"
+      stroke="${c}" stroke-width="2" fill="none"/>
+    <line x1="11" y1="11" x2="21" y2="11" stroke="${c}" stroke-width="1.8"/>
+    <line x1="11" y1="15" x2="18" y2="15" stroke="${c}" stroke-width="1.8"/>
+  </svg>`;
+}
+
 // =======================
-// AUDIO — met cache en timeout
+// AUDIO
 // =======================
 function preload(file) {
   const url = encodeURI(file);
   if (audioCache[url]) return;
-
   const audio = new Audio(url);
   audio.preload = "auto";
   audio.load();
@@ -140,102 +152,87 @@ function preload(file) {
 function play(file) {
   if (!file) return;
   const url = encodeURI(file);
-
-  // Huidig geluid stoppen
   if (currentAudio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
-
-  // Gebruik gecachte audio indien beschikbaar
-  const audio = audioCache[url] ? audioCache[url] : new Audio(url);
+  const audio = audioCache[url] || new Audio(url);
   audioCache[url] = audio;
-
   audio.currentTime = 0;
-
-  const playPromise = audio.play();
-  if (playPromise !== undefined) {
-    playPromise.catch(err => {
-      console.warn(`Audio mislukt: ${file} — ${err.message}`);
-      // Probeer opnieuw met nieuwe instantie
-      const retry = new Audio(url);
-      audioCache[url] = retry;
-      retry.play().catch(e => {
-        console.error(`Audio definitief mislukt: ${file} — ${e.message}`);
-      });
-    });
-  }
-
+  audio.play().catch(() => {
+    const retry = new Audio(url);
+    audioCache[url] = retry;
+    retry.play().catch(e => console.error(`Audio mislukt: ${file} — ${e.message}`));
+  });
   currentAudio = audio;
 }
 
-// =======================
-// AUDIO DIAGNOSE
-// =======================
+// Diagnose via console: checkAllAudio()
 async function checkAllAudio() {
   console.log("=== AUDIO DIAGNOSE START ===");
   const errors = [];
-
-  const allItems = [...new Map(
-    Object.values(data).flat().map(i => [i.file, i])
-  ).values()];
-
+  const allItems = [...new Map(Object.values(data).flat().map(i => [i.file, i])).values()];
   for (const item of allItems) {
     await new Promise(resolve => {
       const url = encodeURI(item.file);
       const audio = new Audio(url);
       const timeout = setTimeout(() => {
-        errors.push({ title: item.title, file: item.file, fout: "Timeout (geen reactie)" });
-        console.warn(`⏱ Timeout: ${item.title} | ${item.file}`);
+        errors.push({ title: item.title, file: item.file, fout: "Timeout" });
         resolve();
       }, 5000);
-
-      audio.addEventListener("canplaythrough", () => {
+      audio.addEventListener("canplaythrough", () => { clearTimeout(timeout); resolve(); }, { once: true });
+      audio.addEventListener("error", () => {
         clearTimeout(timeout);
-        resolve();
-      }, { once: true });
-
-      audio.addEventListener("error", (e) => {
-        clearTimeout(timeout);
-        const msg = audio.error ? `code ${audio.error.code}` : "onbekende fout";
+        const msg = audio.error ? `code ${audio.error.code}` : "onbekend";
         errors.push({ title: item.title, file: item.file, fout: msg });
-        console.warn(`❌ Fout: ${item.title} | ${item.file} | ${msg}`);
         resolve();
       }, { once: true });
-
       audio.load();
     });
   }
-
-  console.log(`=== DIAGNOSE KLAAR: ${errors.length} fouten op ${allItems.length} bestanden ===`);
-  if (errors.length > 0) {
-    console.table(errors);
-    // Toon ook leesbaar overzicht
-    console.log("\n=== FOUTEN OVERZICHT ===");
-    errors.forEach(e => console.log(`❌ "${e.title}" → ${e.file}\n   Fout: ${e.fout}`));
-    console.log("\nKopieer bovenstaande fouten en sla ze op als audio-fouten.txt");
-  } else {
-    console.log("✅ Alle audiobestanden werken correct!");
-  }
-
+  console.log(`=== KLAAR: ${errors.length} fouten op ${allItems.length} bestanden ===`);
+  if (errors.length) console.table(errors);
+  else console.log("✅ Alles werkt!");
   return errors;
 }
-
-// Maak diagnose globaal beschikbaar via console
 window.checkAllAudio = checkAllAudio;
 
 // =======================
-// FAVORIETEN TOGGLE
+// FAVORIETEN
 // =======================
 function toggleFav(file) {
   if (navigator.vibrate) navigator.vibrate(15);
-  if (favorites.includes(file)) {
-    favorites = favorites.filter(f => f !== file);
-  } else {
-    favorites.push(file);
-  }
+  favorites = favorites.includes(file)
+    ? favorites.filter(f => f !== file)
+    : [...favorites, file];
   localStorage.setItem("fav", JSON.stringify(favorites));
   if (currentTheme) renderTheme(currentTheme);
+}
+
+// =======================
+// QUIZ MODE
+// =======================
+function toggleQuiz() {
+  quizMode = !quizMode;
+  const badge = document.getElementById("quiz-badge");
+  const content = document.getElementById("content");
+  if (quizMode) {
+    if (!badge) {
+      const b = document.createElement("div");
+      b.id = "quiz-badge";
+      b.className = "quiz-badge";
+      b.textContent = "Quiz-modus: knoppen tonen West-Vlaamse woorden";
+      document.body.appendChild(b);
+    }
+    content.classList.add("quiz-active");
+  } else {
+    badge?.remove();
+    content.classList.remove("quiz-active");
+  }
+  renderBottombar();
+  // Herladen huidige pagina om labels te wisselen
+  if (currentTheme) renderTheme(currentTheme);
+  else if (activeTab === "favorieten") renderFavorieten();
 }
 
 // =======================
@@ -251,6 +248,10 @@ function renderBottombar() {
     <button class="bottombar-btn ${activeTab === 'favorieten' ? 'active' : ''}" onclick="renderFavorieten()">
       ${tabHeartSVG(activeTab === 'favorieten')}
       <span>'t Beste</span>
+    </button>
+    <button class="bottombar-btn ${quizMode ? 'active' : ''}" onclick="toggleQuiz()" style="${quizMode ? 'color:#f0a500' : ''}">
+      ${quizSVG(quizMode)}
+      <span>Quiz</span>
     </button>
     <button class="bottombar-btn ${activeTab === 'info' ? 'active' : ''}" onclick="renderInfo()">
       <img src="img/logo_wvl@2x.png" class="tab-logo" alt="Info">
@@ -303,47 +304,46 @@ async function loadSounds() {
 // BUILD DATA
 // =======================
 function buildData() {
-  // Init alle thema's leeg
   data = {};
-  THEME_ORDER.forEach(t => { data[t] = []; });
+  [...THEME_ORDER, ...REGIO_THEMES].forEach(t => { data[t] = []; });
 
   sounds.forEach(s => {
     const file = cleanPath(s.fileName);
     const item = {
       file,
-      title: s.soundTitle || s.dialectTitle || file
+      title: s.soundTitle || s.dialectTitle || file,
+      dialect: s.dialectTitle || s.soundTitle || file
     };
 
-    // Categorieën uit JSON veld "categories" (nieuw formaat)
     const rawCats = s.categories || "";
     const catKeys = parseCategories(rawCats);
-    const resolvedCats = catKeys
-      .map(resolveCategory)
-      .filter(Boolean)
-      .filter((v, i, a) => a.indexOf(v) === i); // uniek
+    let resolved = catKeys.map(resolveCategory).filter(Boolean);
+    resolved = [...new Set(resolved)];
 
-    // Fallback: detectie op bestandsnaam (oud formaat)
-    if (resolvedCats.length === 0) {
+    // Fallback op bestandsnaam
+    if (resolved.length === 0) {
       const detected = detectCategoryFromFile(file);
-      if (detected) resolvedCats.push(detected);
+      if (detected) resolved.push(detected);
     }
 
-    // Voeg toe aan elke gevonden categorie
-    resolvedCats.forEach(cat => {
-      if (data[cat]) data[cat].push(item);
+    resolved.forEach(cat => {
+      if (!data[cat]) data[cat] = [];
+      // Geen duplicaten
+      if (!data[cat].find(i => i.file === file)) {
+        data[cat].push(item);
+      }
     });
 
-    // Altijd ook in "Alles"
+    // Altijd in Alles
+    if (!data["Alles"]) data["Alles"] = [];
     if (!data["Alles"].find(i => i.file === file)) {
       data["Alles"].push(item);
     }
 
-    // Preload starten
     preload(file);
   });
 }
 
-// Fallback detectie op bestandsnaam (voor oude JSON zonder categories veld)
 function detectCategoryFromFile(file) {
   const f = file.toLowerCase();
   if (f.includes("uitdruk"))  return "Uitdrukkingen";
@@ -362,6 +362,43 @@ function detectCategoryFromFile(file) {
 }
 
 // =======================
+// ITEM RENDEREN (herbruikbaar)
+// =======================
+function renderItem(item, onFavClick) {
+  const div = document.createElement("div");
+  div.className = "item";
+
+  const displayTitle = quizMode ? item.dialect : item.title;
+  const flipTitle = quizMode ? item.title : item.dialect;
+
+  div.innerHTML = `
+    <span class="label">${fixSpacing(displayTitle)}</span>
+    <span class="fav">${heartSVG(favorites.includes(item.file))}</span>
+  `;
+
+  const label = div.querySelector(".label");
+
+  label.onclick = () => {
+    vibrate();
+    play(item.file);
+    // Toon 2 sec de andere tekst
+    label.innerHTML = fixSpacing(flipTitle);
+    label.classList.add("showing-dialect");
+    setTimeout(() => {
+      label.innerHTML = fixSpacing(displayTitle);
+      label.classList.remove("showing-dialect");
+    }, 2000);
+  };
+
+  div.querySelector(".fav").onclick = (e) => {
+    e.stopPropagation();
+    onFavClick(item.file);
+  };
+
+  return div;
+}
+
+// =======================
 // THEME OVERVIEW
 // =======================
 function renderThemes() {
@@ -376,8 +413,20 @@ function renderThemes() {
   inner.id = "content-inner";
   content.appendChild(inner);
 
-  // Alleen thema's tonen die minstens 1 item hebben
   THEME_ORDER.forEach(theme => {
+    // Submenu "Uitdrukkingen per regio" apart behandelen
+    if (theme === "Uitdrukkingen per regio") {
+      const hasRegio = REGIO_THEMES.some(r => data[r] && data[r].length > 0);
+      if (!hasRegio) return;
+      const div = document.createElement("div");
+      div.className = "item";
+      div.style.paddingLeft = "28px";
+      div.innerHTML = `<span class="label" style="color:#aaa; font-size:0.95em">${fixSpacing("Uitdrukkingen per regio")}</span><span class="arrow">➜</span>`;
+      div.onclick = () => renderRegioMenu();
+      inner.appendChild(div);
+      return;
+    }
+
     if (!data[theme] || data[theme].length === 0) return;
     const div = document.createElement("div");
     div.className = "item";
@@ -390,32 +439,53 @@ function renderThemes() {
 }
 
 // =======================
+// REGIO SUBMENU
+// =======================
+function renderRegioMenu() {
+  currentTheme = null;
+  document.getElementById("title").innerHTML = `
+    <div class="back" onclick="renderThemes()">← Terug</div>
+    <div class="title-text">PER REGIO</div>
+  `;
+
+  const content = document.getElementById("content");
+  content.innerHTML = "";
+  const inner = document.createElement("div");
+  inner.id = "content-inner";
+  content.appendChild(inner);
+
+  REGIO_THEMES.forEach(regio => {
+    if (!data[regio] || data[regio].length === 0) return;
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `<span class="label">${fixSpacing(regio)}</span><span class="arrow">➜</span>`;
+    div.onclick = () => renderTheme(regio);
+    inner.appendChild(div);
+  });
+
+  renderBottombar();
+}
+
+// =======================
 // SUBTHEME VIEW
 // =======================
 function renderTheme(theme) {
   currentTheme = theme;
+  const isRegio = REGIO_THEMES.includes(theme);
+
   document.getElementById("title").innerHTML = `
-    <div class="back" onclick="renderThemes()">← Terug</div>
+    <div class="back" onclick="${isRegio ? 'renderRegioMenu()' : 'renderThemes()'}">← Terug</div>
     <div class="title-text">${fixSpacing(theme.toUpperCase())}</div>
   `;
 
   const content = document.getElementById("content");
   content.innerHTML = "";
-
   const inner = document.createElement("div");
   inner.id = "content-inner";
   content.appendChild(inner);
 
   (data[theme] || []).forEach(item => {
-    const div = document.createElement("div");
-    div.className = "item";
-    div.innerHTML = `
-      <span class="label">${fixSpacing(item.title)}</span>
-      <span class="fav">${heartSVG(favorites.includes(item.file))}</span>
-    `;
-    div.querySelector(".label").onclick = () => { vibrate(); play(item.file); };
-    div.querySelector(".fav").onclick = (e) => { e.stopPropagation(); toggleFav(item.file); };
-    inner.appendChild(div);
+    inner.appendChild(renderItem(item, (file) => toggleFav(file)));
   });
 
   renderBottombar();
@@ -438,7 +508,6 @@ function renderFavorieten() {
 
   const content = document.getElementById("content");
   content.innerHTML = "";
-
   const inner = document.createElement("div");
   inner.id = "content-inner";
   content.appendChild(inner);
@@ -459,19 +528,10 @@ function renderFavorieten() {
     inner.appendChild(empty);
   } else {
     favItems.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "item";
-      div.innerHTML = `
-        <span class="label">${fixSpacing(item.title)}</span>
-        <span class="fav">${heartSVG(true)}</span>
-      `;
-      div.querySelector(".label").onclick = () => { vibrate(); play(item.file); };
-      div.querySelector(".fav").onclick = (e) => {
-        e.stopPropagation();
+      inner.appendChild(renderItem(item, () => {
         toggleFav(item.file);
         renderFavorieten();
-      };
-      inner.appendChild(div);
+      }));
     });
   }
 
@@ -494,10 +554,8 @@ function renderInfo() {
 
   const inner = document.createElement("div");
   inner.className = "info-content";
+  // Geen logo hier — staat al vast in de subbar
   inner.innerHTML = `
-    <div class="info-logo-row">
-      <img src="img/logo.svg" alt="Iedereen West-Vlaams">
-    </div>
     <p class="info-section-title">Over West-Vlamingen</p>
     <p class="info-intro">Het zijn nogal levensgenieters: ze weten alles van lekker eten en drinken, van cultureel én sportief ontspannen.</p>
     <p class="info-body">Levenskwaliteit is er ook genoeg in de enige provincie aan de zee: met de uitgestrekte provinciale domeinen en de prachtige fiets- en wandelpaden in de polders, de heuvels of langs de Leie. Daarenboven zijn West-Vlamingen een zeer ondernemend volkje. Stil zitten staat niet in hun woordenboek. Vwoert'doen daarentegen wel...</p>
@@ -515,7 +573,7 @@ function renderInfo() {
 }
 
 // =======================
-// START APP
+// START
 // =======================
 loadSounds();
 
@@ -536,9 +594,6 @@ window.addEventListener("DOMContentLoaded", () => {
   startScreen.addEventListener("click", () => {
     startScreen.style.opacity = "0";
     startScreen.style.transition = "opacity 0.4s ease";
-    setTimeout(() => {
-      startScreen.remove();
-      renderThemes();
-    }, 400);
+    setTimeout(() => { startScreen.remove(); renderThemes(); }, 400);
   });
 });
