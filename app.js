@@ -142,20 +142,51 @@ const blobCache = {};
 
 async function preloadAll(files) {
   const BATCH_SIZE = 10;
+  let failCount = 0;
+
   for (let i = 0; i < files.length; i += BATCH_SIZE) {
     const batch = files.slice(i, i + BATCH_SIZE);
     await Promise.all(batch.map(async file => {
       if (blobCache[file]) return;
       try {
         const res = await fetch(encodeURI(file));
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const blob = await res.blob();
         blobCache[file] = URL.createObjectURL(blob);
       } catch(e) {
-        console.warn(`Preload mislukt: ${file}`);
+        failCount++;
+        console.warn(`Preload mislukt: ${file} — ${e.message}`);
       }
     }));
   }
-  console.log("\u2705 Alle audio geladen");
+
+  if (failCount > 0) {
+    // Toon melding onderaan het scherm
+    const toast = document.createElement("div");
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #7a2000;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      z-index: 9999;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    `;
+    toast.innerHTML = `&#9888; ${failCount} geluid(en) niet geladen. <u>Tik om te herladen</u>`;
+    toast.onclick = () => location.reload();
+    document.body.appendChild(toast);
+
+    // Verdwijnt automatisch na 8 seconden als gebruiker niet klikt
+    setTimeout(() => toast.remove(), 8000);
+  } else {
+    console.log("\u2705 Alle audio geladen");
+  }
 }
 
 function play(file) {
