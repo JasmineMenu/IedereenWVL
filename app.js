@@ -387,7 +387,7 @@ function renderItem(item, onFavClick) {
     setTimeout(() => {
       label.innerHTML = fixSpacing(displayTitle);
       label.classList.remove("showing-dialect");
-    }, 3500);  //Verander hier de lengte van de getoonde tekst in het oranje
+    }, 5000);  //Verander hier de lengte van de getoonde tekst in het oranje
   };
 
   div.querySelector(".fav").onclick = (e) => {
