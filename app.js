@@ -141,30 +141,28 @@ function quizSVG(active) {
 // AUDIO
 // =======================
 function preload(file) {
+  // Enkel preloaden, niet cachen voor afspelen
   const url = encodeURI(file);
-  if (audioCache[url]) return;
   const audio = new Audio(url);
   audio.preload = "auto";
   audio.load();
-  audioCache[url] = audio;
 }
 
 function play(file) {
   if (!file) return;
   const url = encodeURI(file);
+
+  // Stop huidig geluid
   if (currentAudio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
-  const audio = audioCache[url] || new Audio(url);
-  audioCache[url] = audio;
-  audio.currentTime = 0;
-  audio.play().catch(() => {
-    const retry = new Audio(url);
-    audioCache[url] = retry;
-    retry.play().catch(e => console.error(`Audio mislukt: ${file} — ${e.message}`));
-  });
+
+  // Altijd nieuwe instantie voor betrouwbaar afspelen
+  const audio = new Audio(url);
   currentAudio = audio;
+
+  audio.play().catch(e => console.warn(`Audio mislukt: ${file} — ${e.message}`));
 }
 
 // Diagnose via console: checkAllAudio()
