@@ -13,7 +13,7 @@ html, body {
   width: 100%;
   height: 100%;
   font-family: WVL, sans-serif;
-  background: black;
+  background: #0f0f0f;
   color: white;
   overflow: hidden;
   text-align: left;
@@ -79,7 +79,7 @@ html, body {
   top: 65px;
   left: 0;
   right: 0;
-  background: black;
+  background: #0f0f0f;
   text-align: center;
   padding: 12px 10px;
   font-weight: bold;
@@ -154,7 +154,7 @@ html, body {
   left: 0;
   right: 0;
   overflow-y: auto;
-  background: black;
+  background: #0f0f0f;
 }
 
 #content-inner {
@@ -359,7 +359,7 @@ html, body {
 #startscreen {
   position: fixed;
   inset: 0;
-  background: black;
+  background: #0f0f0f;
   display: flex;
   justify-content: center;
   align-items: center;
