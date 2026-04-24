@@ -141,19 +141,26 @@ function quizSVG(active) {
 // AUDIO
 // =======================
 // =======================
-// AUDIO — Blob cache voor instant afspelen
+// AUDIO — Blob cache met beperkte gelijktijdigheid
 // =======================
 const blobCache = {};
 
-async function preload(file) {
-  if (blobCache[file]) return;
-  try {
-    const response = await fetch(encodeURI(file));
-    const blob = await response.blob();
-    blobCache[file] = URL.createObjectURL(blob);
-  } catch(e) {
-    console.warn(`Preload mislukt: ${file}`);
+async function preloadAll(files) {
+  const BATCH_SIZE = 10; // max 10 tegelijk
+  for (let i = 0; i < files.length; i += BATCH_SIZE) {
+    const batch = files.slice(i, i + BATCH_SIZE);
+    await Promise.all(batch.map(async file => {
+      if (blobCache[file]) return;
+      try {
+        const res = await fetch(encodeURI(file));
+        const blob = await res.blob();
+        blobCache[file] = URL.createObjectURL(blob);
+      } catch(e) {
+        console.warn(`Preload mislukt: ${file}`);
+      }
+    }));
   }
+  console.log("✅ Alle audio geladen");
 }
 
 function play(file) {
@@ -345,8 +352,10 @@ function buildData() {
     }
 
 // Na de forEach loop, niet erbinnen:
-Promise.all(sounds.map(s => preload(cleanPath(s.fileName))));
-  });
+  // Start preload na opbouw data
+  const allFiles = [...new Set(sounds.map(s => cleanPath(s.fileName)))];
+  preloadAll(allFiles);
+
 }
 
 function detectCategoryFromFile(file) {
