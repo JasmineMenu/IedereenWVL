@@ -93,7 +93,7 @@
 "soundTitle": "Er is een ruit uit het huis, en als het regent, regent het erin",
 "dialectTitle": "'tis e rute ut et us en alst rint, rint 't erin",
 "fileName": "rute.mp3",
-"categories": "uitdrukking,maaike, oostende, ieper, kortrijk, brugge, roeselare"
+"categories": "uitdrukking, maaike, oostende, ieper, kortrijk, brugge, roeselare"
 },
 {
 "soundTitle": "Pudding",
@@ -474,7 +474,7 @@
 "categories": "cafe"
 },
 {
-"soundTitle": "Als er iets te verdienen valt,ben je er niet bij",
+"soundTitle": "Als er iets te verdienen valt, ben je er niet bij",
 "dialectTitle": "Je stoa were meje schutl int droage at pap rint",
 "fileName": "Je_stoa_were_met_je_skutl_int_drwoige_at_pap_rint.mp3",
 "categories": "uitdrukking, maaike, brugge, kortrijk"
@@ -666,7 +666,7 @@
 "categories": "winkel"
 },
 {
-"soundTitle": "Eet gezond,dan word je niet ziek",
+"soundTitle": "Eet gezond, dan word je niet ziek",
 "dialectTitle": "'t E beter goe g'eetn dan 'tbedde versleetn",
 "fileName": "t_es_betre_goe_geeten_dan_t_bedde_versleten.mp3",
 "categories": "uitdrukking, maaike, ieper, kortrijk, roeselare, brugge, "
@@ -1008,7 +1008,7 @@
 "categories": "cafe"
 },
 {
-"soundTitle": "Ambetante,geslepen vrouw",
+"soundTitle": "Ambetante, geslepen vrouw",
 "dialectTitle": "'En ekse van e vrouwmens",
 "fileName": "WVL_APP_10_UitdrukkingenIeper_EeneksevaneVrommens.mp3",
 "categories": "uitdrukking, oostende, ieper, kortrijk, brugge, roeselare"
@@ -1123,7 +1123,7 @@
 },
 {
 "soundTitle": "Dom",
-"dialectTitle": "Zo roend of  en'ei",
+"dialectTitle": "Zo roend ofen'ei",
 "fileName": "WVL_APP_10_UitdrukkingenBrugge_ZoRoendOfEnEi.mp3",
 "categories": "uitdrukking, oostende, ieper, kortrijk, brugge, roeselare"
 },
@@ -1443,18 +1443,15 @@
 "soundTitle": "Beste wensen",
 "dialectTitle": "Beste wenschen",
 "fileName": "bestewensen.mp3",
-"categories": "feest"
-  },
-{
-  "soundTitle": "Bestek",
-  "dialectTitle": "Couverts",
-  "fileName": "WVL_APP_2_Resto_Rowelle.mp3",
-  "categories": "resto"
+"categories": "feest"},
+{"soundTitle": "Bestek",
+"dialectTitle": "Couverts",
+"fileName": "WVL_APP_2_Resto_Rowelle.mp3",
+"categories": "resto"
 },
-{
-  "soundTitle": "Dat geeft niet",
-  "dialectTitle": "Da besan nie",
-  "fileName": "WVL_APP_11_DaBesanNie.mp3",
-  "categories": "uitdrukkingen, oostende, ieper, kortrijk, brugge, roeselare"
+{"soundTitle": "Dat geeft niet",
+"dialectTitle": "Da besan nie",
+"fileName": "WVL_APP_11_DaBesanNie.mp3",
+"categories": "uitdrukkingen, oostende, ieper, kortrijk, brugge, roeselare"
 }
 ]}
