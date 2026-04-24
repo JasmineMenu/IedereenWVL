@@ -617,6 +617,12 @@ window.addEventListener("DOMContentLoaded", () => {
   startScreen.addEventListener("click", () => {
     startScreen.style.opacity = "0";
     startScreen.style.transition = "opacity 0.4s ease";
-    setTimeout(() => { startScreen.remove(); renderThemes(); }, 400);
+    setTimeout(() => {
+      startScreen.remove();
+      renderThemes();
+      // Start preload PAS na klik op startscherm
+      const allFiles = [...new Set(sounds.map(s => cleanPath(s.fileName)))];
+      preloadAll(allFiles);
+    }, 400);
   });
 });
