@@ -328,10 +328,8 @@ function buildData() {
 
     const rawCats = s.categories || "";
     const catKeys = parseCategories(rawCats);
-    let resolved = catKeys.map(resolveCategory).filter(Boolean);
-    resolved = [...new Set(resolved)];
+    let resolved = [...new Set(catKeys.map(resolveCategory).filter(Boolean))];
 
-    // Fallback op bestandsnaam
     if (resolved.length === 0) {
       const detected = detectCategoryFromFile(file);
       if (detected) resolved.push(detected);
@@ -339,23 +337,15 @@ function buildData() {
 
     resolved.forEach(cat => {
       if (!data[cat]) data[cat] = [];
-      // Geen duplicaten
       if (!data[cat].find(i => i.file === file)) {
         data[cat].push(item);
       }
     });
 
-    // Altijd in Alles
-    if (!data["Alles"]) data["Alles"] = [];
     if (!data["Alles"].find(i => i.file === file)) {
       data["Alles"].push(item);
     }
-
-// Na de forEach loop, niet erbinnen:
-  // Start preload na opbouw data
-  const allFiles = [...new Set(sounds.map(s => cleanPath(s.fileName)))];
-  preloadAll(allFiles);
-
+  });
 }
 
 function detectCategoryFromFile(file) {
