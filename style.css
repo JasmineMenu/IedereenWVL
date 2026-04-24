@@ -54,7 +54,6 @@ html, body {
   letter-spacing: 0.03em;
 }
 
-/* Rij met titel + delete knop op favorieten pagina */
 .topbar-with-action {
   position: absolute;
   right: 15px;
@@ -67,10 +66,11 @@ html, body {
   border: none;
   font-size: 26px;
   cursor: pointer;
-  color: #ff0000;
+  color: #ff2222;
   padding: 4px;
   line-height: 1;
   -webkit-tap-highlight-color: transparent;
+  filter: hue-rotate(0deg);
 }
 
 /* ===== SUB BAR ===== */
@@ -115,7 +115,7 @@ html, body {
   font-family: WVL, sans-serif;
   font-size: 13px;
   padding: 5px 0;
-  width: 33.33%;
+  width: 25%;
   height: 100%;
   transition: color 0.15s ease;
   -webkit-tap-highlight-color: transparent;
@@ -184,6 +184,11 @@ html, body {
   padding-right: 10px;
   word-spacing: normal;
   overflow-wrap: break-word;
+  transition: color 0.2s ease;
+}
+
+.item .label.showing-dialect {
+  color: #f0a500;
 }
 
 .item:active {
@@ -211,11 +216,35 @@ html, body {
   display: inline-block;
 }
 
-.delete-icon {
-  width: 20px;
-  height: 20px;
-  display: block;
+/* Quiz modus badge */
+.quiz-badge {
+  position: fixed;
+  top: 112px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background: #5a3e00;
+  color: #f0a500;
+  font-size: 13px;
+  padding: 5px;
+  z-index: 18;
+  border-bottom: 1px solid #f0a500;
 }
+
+#content.quiz-active {
+  top: 138px;
+}
+
+/* Submenu stijl */
+.submenu-header {
+  padding: 12px 15px 6px;
+  font-size: 13px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid #333;
+}
+
 /* ===== POPUP ===== */
 .popup-overlay {
   position: fixed;
@@ -276,24 +305,12 @@ html, body {
   padding: 25px 20px 40px;
 }
 
-.info-logo-row {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 28px;
-}
-
-.info-logo-row img {
-  max-width: 90%;
-  height: auto;
-}
-
 .info-section-title {
   color: #cc2200;
   font-size: 22px;
   font-weight: bold;
   text-align: center;
   margin: 0 0 14px;
-  word-spacing: -0.4em;
 }
 
 .info-intro {
@@ -302,7 +319,6 @@ html, body {
   text-align: center;
   line-height: 1.6;
   margin: 0 0 18px;
-  word-spacing: -0.4em;
 }
 
 .info-body {
@@ -311,7 +327,6 @@ html, body {
   line-height: 1.7;
   color: #ccc;
   margin: 0 0 30px;
-  word-spacing: -0.4em;
 }
 
 .info-wvl-logo {
@@ -358,25 +373,9 @@ html, body {
 
 /* ===== MOBILE ===== */
 @media (max-width: 600px) {
-  #content-inner {
-    max-width: 100%;
-  }
-
-  .title-text {
-    font-size: 26px;
-  }
-
-  .item {
-    padding: 14px 15px;
-  }
-
-  .item .label,
-  .item .fav,
-  .item .arrow {
-    font-size: 18px;
-  }
-
-  .topbar, .subbar {
-    font-size: 18px;
-  }
+  #content-inner { max-width: 100%; }
+  .title-text { font-size: 26px; }
+  .item { padding: 14px 15px; }
+  .item .label, .item .fav, .item .arrow { font-size: 18px; }
+  .topbar, .subbar { font-size: 18px; }
 }
