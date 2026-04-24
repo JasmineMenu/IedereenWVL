@@ -140,28 +140,34 @@ function quizSVG(active) {
 // =======================
 // AUDIO
 // =======================
-function preload(file) {
-  // Enkel preloaden, niet cachen voor afspelen
-  const url = encodeURI(file);
-  const audio = new Audio(url);
-  audio.preload = "auto";
-  audio.load();
+// =======================
+// AUDIO — Blob cache voor instant afspelen
+// =======================
+const blobCache = {};
+
+async function preload(file) {
+  if (blobCache[file]) return;
+  try {
+    const response = await fetch(encodeURI(file));
+    const blob = await response.blob();
+    blobCache[file] = URL.createObjectURL(blob);
+  } catch(e) {
+    console.warn(`Preload mislukt: ${file}`);
+  }
 }
 
 function play(file) {
   if (!file) return;
-  const url = encodeURI(file);
 
-  // Stop huidig geluid
   if (currentAudio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
+    currentAudio = null;
   }
 
-  // Altijd nieuwe instantie voor betrouwbaar afspelen
-  const audio = new Audio(url);
+  const src = blobCache[file] || encodeURI(file);
+  const audio = new Audio(src);
   currentAudio = audio;
-
   audio.play().catch(e => console.warn(`Audio mislukt: ${file} — ${e.message}`));
 }
 
@@ -338,7 +344,8 @@ function buildData() {
       data["Alles"].push(item);
     }
 
-    preload(file);
+// Na de forEach loop, niet erbinnen:
+Promise.all(sounds.map(s => preload(cleanPath(s.fileName))));
   });
 }
 
