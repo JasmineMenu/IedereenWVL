@@ -201,13 +201,15 @@ html, body {
 .item .arrow {
   flex-grow: 0;
   flex-shrink: 0;
-  width: 30px;
-  min-width: 30px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
   text-align: right;
   margin-left: 10px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  cursor: pointer;
 }
 
 .heart-icon {
@@ -219,20 +221,20 @@ html, body {
 /* Quiz modus badge */
 .quiz-badge {
   position: fixed;
-  top: 112px;
+  bottom: 80px;
   left: 0;
   right: 0;
   text-align: center;
   background: #5a3e00;
   color: #f0a500;
   font-size: 13px;
-  padding: 5px;
-  z-index: 18;
-  border-bottom: 1px solid #f0a500;
+  padding: 8px;
+  z-index: 20;
+  border-top: 1px solid #f0a500;
 }
 
 #content.quiz-active {
-  top: 138px;
+  bottom: 108px;
 }
 
 /* Submenu stijl */
