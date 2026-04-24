@@ -221,7 +221,7 @@ function toggleQuiz() {
       const b = document.createElement("div");
       b.id = "quiz-badge";
       b.className = "quiz-badge";
-      b.textContent = "Quiz-modus: knoppen tonen West-Vlaamse woorden";
+b.textContent = "We gon eki kik'n ofdaj der 'ntwa van verstoan 'et";
       document.body.appendChild(b);
     }
     content.classList.add("quiz-active");
@@ -387,7 +387,7 @@ function renderItem(item, onFavClick) {
     setTimeout(() => {
       label.innerHTML = fixSpacing(displayTitle);
       label.classList.remove("showing-dialect");
-    }, 2000);
+    }, 3500);  //Verander hier de lengte van de getoonde tekst in het oranje
   };
 
   div.querySelector(".fav").onclick = (e) => {
