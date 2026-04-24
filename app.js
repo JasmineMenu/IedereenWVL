@@ -564,12 +564,33 @@ function renderInfo() {
     <p class="info-section-title">Over de app</p>
     <p class="info-intro">Verras vriend en vijand met de leukste West-Vlaamse woorden en uitspraken.</p>
     <p class="info-body">Voor elke situatie en bij elke gelegenheid kan je vanaf nu uitpakken met een perfecte West-Vlaamse tongval. Onderweg, op caf\u00e9 of restaurant, in de winkel, ...</p>
+    <hr class="info-divider">
+    <a href="https://vls.wikipedia.org/wiki/Iedereen_West-Vlaams" target="_blank" class="info-link">
+      &#128216; Wikipedia pagina
+    </a>
+    <button class="info-share-btn" onclick="shareApp()">
+      &#8679; Deel deze app
+    </button>
   `;
   content.appendChild(inner);
 
   renderBottombar();
 }
 
+function shareApp() {
+  if (navigator.share) {
+    navigator.share({
+      title: "Iedereen West-Vlaams",
+      text: "Verras vriend en vijand met de leukste West-Vlaamse woorden!",
+      url: "https://jasminemenu.github.io/IedereenWVL/"
+    }).catch(() => {});
+  } else {
+    // Fallback: kopieer naar klembord
+    navigator.clipboard.writeText("https://jasminemenu.github.io/IedereenWVL/")
+      .then(() => alert("Link gekopieerd naar klembord!"))
+      .catch(() => alert("https://jasminemenu.github.io/IedereenWVL/"));
+  }
+}
 // =======================
 // START
 // =======================
