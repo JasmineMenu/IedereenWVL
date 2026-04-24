@@ -578,17 +578,32 @@ function renderInfo() {
 }
 
 function shareApp() {
-  if (navigator.share) {
+  const url = "https://jasminemenu.github.io/IedereenWVL/";
+  
+  if (navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    // Alleen op mobile de native share gebruiken
     navigator.share({
       title: "Iedereen West-Vlaams",
       text: "Verras vriend en vijand met de leukste West-Vlaamse woorden!",
-      url: "https://jasminemenu.github.io/IedereenWVL/"
+      url: url
     }).catch(() => {});
   } else {
-    // Fallback: kopieer naar klembord
-    navigator.clipboard.writeText("https://jasminemenu.github.io/IedereenWVL/")
-      .then(() => alert("Link gekopieerd naar klembord!"))
-      .catch(() => alert("https://jasminemenu.github.io/IedereenWVL/"));
+    // Desktop: kopieer naar klembord en toon bevestiging in de app
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.querySelector(".info-share-btn");
+      const original = btn.innerHTML;
+      btn.innerHTML = "&#10003; Link gekopieerd!";
+      btn.style.background = "#1a4a1a";
+      btn.style.borderColor = "#2a7a2a";
+      setTimeout(() => {
+        btn.innerHTML = original;
+        btn.style.background = "";
+        btn.style.borderColor = "";
+      }, 2000);
+    }).catch(() => {
+      // Laatste fallback: toon de URL in een prompt zodat gebruiker kan kopiëren
+      prompt("Kopieer deze link:", url);
+    });
   }
 }
 // =======================
