@@ -1,4 +1,4 @@
-{ "results": [
+{"results": [
 {
 "soundTitle": "Schotelvod",
 "dialectTitle": "Schutteldoek",
@@ -284,7 +284,7 @@
 { "results": [
 {
 "soundTitle": "De kortste weg nemen",
-"dialectTitle": "'stik over rik goan",
+"dialectTitle": "stik over rik goan",
 "fileName": "Stick_over_rick_goan.mp3",
 "categories": "uitdrukking, maaike, oostende"
 },
@@ -296,7 +296,7 @@
 },
 {
 "soundTitle": "Vol-au-vent",
-"dialectTitle": "Volovang'",
+"dialectTitle": "Volovang",
 "fileName": "WVL_APP_2_Resto_Volovang.mp3",
 "categories": "resto"
 },
@@ -584,7 +584,7 @@
 },
 {
 "soundTitle": "Ik ben doodop",
-"dialectTitle": "''Kzin tette",
+"dialectTitle": "'Kzin tette",
 "fileName": "K_zin_tette.mp3",
 "categories": "uitdrukking, maaike, ieper, kortrijk, roeselare"
 },
@@ -602,7 +602,7 @@
 },
 {
 "soundTitle": "Hij is niet van de slimste",
-"dialectTitle": "'ie'ji te dom vor 'ooi t'eten",
+"dialectTitle": "'Ji te dom vor 'ooi t'eten",
 "fileName": "J_is_te_dom_om_hooi_teten.mp3",
 "categories": "uitdrukking, maaike, ieper, brugge, kortrijk, roeselare, oostende"
 },
@@ -668,7 +668,7 @@
 },
 {
 "soundTitle": "Eet gezond,dan word je niet ziek",
-"dialectTitle": "'t E beter goe g'eetn dan 'tbedde versleetn ",
+"dialectTitle": "'t E beter goe g'eetn dan 'tbedde versleetn",
 "fileName": "t_es_betre_goe_geeten_dan_t_bedde_versleten.mp3",
 "categories": "uitdrukking, maaike, ieper, kortrijk, roeselare, brugge, "
 },
@@ -1016,7 +1016,7 @@
 },
 {
 "soundTitle": "Vrouwen en plezier kosten geld",
-"dialectTitle": "'t Zin de duv'n en de wuv'n die 't geld doe schuvn",
+"dialectTitle": "'t Zin de duv'n en de wuv'n die et geld doe schuvn",
 "fileName": "Tzin_de_duven_en_de_wuven_die_tgeld_doen_stuven_alt_met_schuven.mp3",
 "categories": "uitdrukking, maaike, oostende, ieper, kortrijk, brugge, roeselare"
 },
@@ -1034,7 +1034,7 @@
 },
 {
 "soundTitle": "Hij heeft hen gekoppeld en ze zijn getrouwd",
-"dialectTitle": "'Jet er ne paen broek an verdient",
+"dialectTitle": "'Jet er ne paen broek an verdiend",
 "fileName": "jeetr_ne_paene_broek_an_verdint.mp3",
 "categories": "uitdrukking, maaike, ieper"
 },
@@ -1070,7 +1070,7 @@
 },
 {
 "soundTitle": "Hij is niet goed wijs",
-"dialectTitle": "'Tis ne noek of",
+"dialectTitle": "Tis ne noek of",
 "fileName": "WVL_APP_9_UitdrukkingenRoeselare_TisNeNoekOf.mp3",
 "categories": "uitdrukking, oostende, ieper, kortrijk, brugge, roeselare"
 },
@@ -1291,7 +1291,7 @@
 "categories": "huistuinkeuken"
 },
 {
-"soundTitle": "'T is van geen nut",
+"soundTitle": "Het heeft geen nut",
 "dialectTitle": "Te n'e gin avanse",
 "fileName": "WVL_APP_10_UitdrukkingenKortrijk_TenEGinAvanse.mp3",
 "categories": "uitdrukking, oostende, ieper, kortrijk, brugge, roeselare"
@@ -1430,7 +1430,7 @@
 },
 {
 "soundTitle": "Zwaar feesten",
-"dialectTitle": "Fjiest'n gelik de biest'n",
+"dialectTitle": "Fjiest'n gelik de biestn",
 "fileName": "feestenbeesten.mp3",
 "categories": "feest, uitdrukking, oostende, ieper, kortrijk, brugge, roeselare"
 },
@@ -1457,5 +1457,6 @@
   "dialectTitle": "Da besan nie",
   "fileName": "WVL_APP_11_DaBesanNie.mp3",
   "categories": "uitdrukkingen, oostende, ieper, kortrijk, brugge, roeselare"
-},
-] }
+}
+]
+}
